@@ -1,0 +1,724 @@
+---
+title: "Climate-driven elevational range dynamics of dominant trees in the Western Himalayas"
+
+author:
+  - name: Abhishek Kumar
+    url: https://akumar.netlify.app/
+    orcid: 0000-0003-2252-7623
+    email: abhikumar.pu@gmail.com
+    affiliation: Panjab University, Chandigarh
+    
+  - name: Meenu Patil
+    url: https://www.researchgate.net/profile/Meenu-Patil
+    orcid: 0000-0002-7664-7877
+    email: patilmeenu2@gmail.com
+    affiliation: Panjab University, Chandigarh
+    
+  - name: Pardeep Kumar
+    url: https://www.researchgate.net/profile/Pardeep-Kumar-22
+    orcid: 0000-0001-6707-1485
+    email: pardeepmor989@gmail.com
+    affiliation: Panjab University, Chandigarh
+    
+  - name: Anand Narain Singh
+    url: https://www.researchgate.net/profile/Anand-Singh-15
+    orcid: 0000-0002-0148-8680
+    email: dranand1212@gmail.com
+    affiliation: Panjab University, Chandigarh
+
+bibliography: refs.bib
+csl: chicago-author-date.csl
+
+format: 
+  # html:
+  #   number-sections: true
+  #   toc: true
+  #   toc-depth: 3
+  #   default-image-extension: png
+  
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    number-sections: true
+    mainfont: Arial
+    fontsize: 10pt
+    linestretch: 1.5
+    sansfont: Arial
+    colorlinks: true
+    link-citations: true
+    citecolor: "#0000ff"
+    default-image-extension: pdf
+    code-block-bg: true
+    include-in-header:
+      - text: |
+          \renewcommand{\thesection}{S\arabic{section}}
+  
+  docx:
+    reference-doc: ecol-app.docx
+    link-citations: true
+    link-bibliography: true
+    fig-dpi: 600
+    default-image-extension: png
+    
+crossref: 
+  tbl-title: "Table S"
+  tbl-prefix: "Table S"
+  tbl-labels: arabic
+  fig-title: "Figure S"
+  fig-prefix: "Figure S"
+  fig-labels: arabic
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  comment = "#>", echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE
+)
+
+## load packages
+library(biomod2)        ## species distribution modelling
+library(emmeans)        ## estimate marginal means
+library(sf)             ## vector data handling
+library(terra)          ## raster data handling
+library(tidyverse)      ## general data manipulation and visualisation
+library(tmap)           ## visualising spatial data
+
+## colour palette for study sites
+scen_pal <- c("current" = "#440154ff", "2040" = "#31688eff", 
+              "2070" = "#35b779ff", "2100" = "#fde725ff")
+
+## set theme for ggplot
+theme_set(
+  theme_bw(base_size = 14) +
+    
+    theme(
+      panel.grid = element_blank(),
+      
+      axis.text = element_text(size = 10),
+      
+      strip.background = element_blank(),
+      strip.text = element_text(hjust = 0, face = "bold")
+    )
+)
+```
+
+\newpage
+# Supplementary tables
+
+```{r}
+#| label: tbl-occ-literature
+#| tbl-cap: Summary of literature sources used to obtain occurrence data for selected tree species in Western Himalayas. 
+
+
+read.csv("output/cleaned_occ.csv") |>
+  
+  ## unique species and reference
+  distinct(species, reference) |>
+  
+  ## omit Field data
+  filter(reference != "Field") |> 
+  
+  ## prepare species names
+  mutate(species = paste0("*", species, "*")) |>
+  
+  ## prepare references
+  mutate(refs = paste0("@", reference)) |>
+  arrange(reference) |>
+  
+  ## make wider format
+  pivot_wider(names_from = reference, values_from = refs, values_fill = "-") |>
+  arrange(species) |>
+  unite(col = "Reference", Amare2016:Tiwari2023, sep = "; ") |>
+  mutate(Reference = paste0("[", gsub("-; |; -", "", Reference), "]")) |>
+  
+  ## make table
+  rename("Species" = species) |>
+  knitr::kable()
+```
+
+\newpage
+
+```{r}
+#| label: tbl-net-change
+#| tbl-cap: Predicted net change in habitat suitability for selected species under future (2040, 2070, and 2100) climatic conditions. The values represent the percentage of pixels in study area and species are arranged according to net change by the end of the century (2100). 
+
+
+list.files(
+  path = "output/range_dynamics",
+  pattern = "src_count.csv",
+  full.names = TRUE
+) |> 
+  read_csv(id = "path") |>
+  mutate(path = gsub("output/range_dynamics/|_current_to|_src_count.csv", "", path)) |>
+  separate(path, into = c("species", "year"), sep = "_") |>
+  filter(grepl("EMca", full.name)) |>
+  mutate(Species = paste0("*", gsub("\\.", " ", species), "*") ) |>
+  select(Species, year, perc.level, perc.value) |>
+  distinct() |>
+  pivot_wider(names_from = perc.level, values_from = perc.value) |>
+  select(Species, year, SpeciesRangeChange) |>
+  pivot_wider(names_from = year, values_from = SpeciesRangeChange) |>
+  arrange(`2100`) |>
+  knitr::kable(digits = 2)
+```
+
+\newpage
+
+```{r}
+#| label: tbl-elev-anova
+#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070 and 2100) on elevational distribution for each species. The type-II ANOVA was used to determine the significance of effects and generalised eta squared (&eta;^2^) was used as effect size.
+
+
+read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
+  dplyr::group_by(species) |>
+  rstatix::anova_test(elevation ~ scen, type = 2) |>
+  as_tibble() |>
+  mutate(species = paste0("*", gsub("\\.", " ", species), "*"),
+         p = ifelse(p < 0.001, yes = "<0.001", as.character(round(p, 3))),
+         `F` = round(`F`, 2)
+         ) |>
+  select(-c(Effect, `p<.05`)) |>
+  rename("Species" = species, "&eta;^2^" = ges) |>
+  knitr::kable(align = "lrrrrr")
+```
+
+\newpage
+
+```{r}
+#| label: tbl-elev-comp
+#| tbl-cap: Comparison of average elevation under current and future climatic condictions for selected species in Western Himalayas. The values (rounded to integers) represent the estimated marginal mean elevation (in metres) and associated standard error (SE) across all predicted pixels. The significance of difference was determined using the t-test with Tukey’s adjustment for multiple comparison (equivalent to Tukey’s test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
+
+
+read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
+  dplyr::group_by(species) |>
+  tidyr::nest() |>
+  rowwise() |> 
+  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
+         emm = list(emmeans::emmeans(aov_results, "scen", type= "response")), 
+         cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
+  dplyr::select(-data, -aov_results, -emm)|> 
+  unnest(cols = c(cld)) |>
+  dplyr::mutate(cld = trimws(.group)) |> 
+  dplyr::select(species, scen, emmean, SE, cld) |>
+  mutate(across(is.double, ~round(.x, 2))) |>
+  mutate(species = paste0("*", gsub("\\.", " ", species), "*"),
+         Elevation = paste0(emmean, " ± ", SE, "^", cld, "^")
+         ) |>
+  dplyr::select(species, scen, Elevation) |>
+  pivot_wider(names_from = scen, values_from = Elevation) |>
+  select(species, current, `2040`, `2070`, `2100`) |>
+  rename("Species" = species, "Current" = current) |>
+  knitr::kable(align = "lrrrr")
+```
+
+\newpage
+
+```{r}
+#| label: tbl-range-param-anova
+#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070 and 2100) on elevation range parameters. The type-II ANOVA was used to test the significance of effects and generalised eta squared (&eta;^2^) was used as effect size.
+
+
+## optimum elevation
+elev_opt <- read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
+  ## build 100 m elevational bands
+  mutate(elev_band  = cut(elevation, breaks = c(seq(0, 4900, 100), Inf),
+                          labels = c(seq(100, 5000, 100)))) |>
+  ## convert to numeric
+  mutate(elev_band = as.character(elev_band),
+         elev_band = as.numeric(elev_band)) |>
+  ## count number of pixels
+  group_by(species, scen) |>
+  count(elev_band) |>
+  ## filter elevational band with maximum pixels
+  group_by(species, scen) |>
+  filter(n == max(n)) |>
+  select(-n) |>
+  rename("Optimum.range" = elev_band)
+
+## elevation range parameters (optimum and edges) ANOVA
+
+read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
+  left_join(elev_opt, by = join_by(species, scen)) |>
+  group_by(species, scen) |>
+  mutate(range_params = case_when(
+    elevation < quantile(elevation, 0.05) ~"Trailing",
+    between(elevation, Optimum.range - 100, Optimum.range) ~"Optimum",
+    elevation > quantile(elevation, 0.95) ~"Leading",
+    TRUE ~ "Other"
+  )) |>
+  select(-Optimum.range) |>
+  filter(range_params != "Other") |>
+  group_by(species, range_params) |>
+  rstatix::anova_test(formula = elevation ~ scen, type = 2) |>
+  as_tibble() |>
+  mutate(
+    species = paste0("*", gsub("\\.", " ", species), "*"),
+    `F` = round(`F`, 2),
+    p = ifelse(p < 0.001, yes = "<0.001", as.character(round(p, 3))),
+    ges = ifelse(ges < 0.001, yes = "<0.001", as.character(round(ges, 3)))
+  ) |>
+  select(-c(Effect, `p<.05`)) |>
+  rename("Species" = species, "Parameters" = range_params, "&eta;^2^" = ges) |>
+  knitr::kable(align = "llrrrrr")
+```
+
+\newpage
+
+```{r}
+## optimum elevation
+elev_opt <- read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
+  ## build 100 m elevational bands
+  mutate(elev_band  = cut(elevation, breaks = c(seq(0, 4900, 100), Inf),
+                          labels = c(seq(100, 5000, 100)))) |>
+  ## convert to numeric
+  mutate(elev_band = as.character(elev_band),
+         elev_band = as.numeric(elev_band)) |>
+  ## count number of pixels
+  group_by(species, scen) |>
+  count(elev_band) |>
+  ## filter elevational band with maximum pixels
+  group_by(species, scen) |>
+  filter(n == max(n)) |>
+  select(-n) |>
+  rename("Optimum.range" = elev_band)
+
+## elevation range parameters (optimum and edges)
+elev_range_param <- read_csv("output/suitability_elevation.csv", 
+                             show_col_types = FALSE) |>
+  left_join(elev_opt, by = join_by(species, scen)) |>
+  group_by(species, scen) |>
+  mutate(range_params = case_when(
+    elevation < quantile(elevation, 0.05) ~"Trailing.edge",
+    between(elevation, Optimum.range - 100, Optimum.range) ~"Optimum.range",
+    elevation > quantile(elevation, 0.95) ~"Leading.edge",
+    TRUE ~ "Other.range"
+  )) |>
+  select(-Optimum.range) |>
+  filter(range_params != "Other.range")
+
+## tukey's test for significance
+tuk_trailing <- elev_range_param |>
+  filter(range_params == "Trailing.edge") |>
+  dplyr::group_by(species) |>
+  tidyr::nest() |>
+  rowwise() |> 
+  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
+                emm = list(emmeans::emmeans(aov_results, "scen", type = "response")), 
+                cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
+  dplyr::select(-data, -aov_results, -emm)|> 
+  unnest(cols = c(cld)) |>
+  dplyr::mutate(cld = trimws(.group)) |> 
+  dplyr::select(-.group) |>
+  select(species, scen, emmean, SE, cld)
+
+## tukeys test for optimum range
+tuk_optimum <- elev_range_param |>
+  filter(range_params == "Optimum.range") |>
+  dplyr::group_by(species) |>
+  tidyr::nest() |>
+  rowwise() |> 
+  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
+                emm = list(emmeans::emmeans(aov_results, "scen", type= "response")), 
+                cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
+  dplyr::select(-data, -aov_results, -emm)|> 
+  unnest(cols = c(cld)) |>
+  dplyr::mutate(cld = trimws(.group)) |> 
+  dplyr::select(-.group) |>
+  select(species, scen, emmean, SE, cld)
+
+## tukeys test for leading edge
+tuk_leading <- elev_range_param |>
+  filter(range_params == "Leading.edge") |>
+  dplyr::group_by(species) |>
+  tidyr::nest() |>
+  rowwise() |> 
+  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
+                emm = list(emmeans::emmeans(aov_results, "scen", type= "response")), 
+                cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
+  dplyr::select(-data, -aov_results, -emm)|> 
+  unnest(cols = c(cld)) |>
+  dplyr::mutate(cld = trimws(.group)) |> 
+  dplyr::select(-.group) |>
+  select(species, scen, emmean, SE, cld)
+```
+
+```{r}
+#| label: tbl-range-param-comp
+#| tbl-cap: Comparison of elevational range parameters under current and future climatic condictions for selected species in Western Himalayas. The values represent the estimated marginal mean elevation (in metres) and associated standard error (SE). The significance of difference was determined using the t-test with Tukey’s adjustment for multiple comparison (equivalent to Tukey’s test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
+
+
+bind_rows(
+  mutate(tuk_trailing, Parameters = "Trailing"),
+  mutate(tuk_optimum,  Parameters = "Optimum"),
+  mutate(tuk_leading,  Parameters = "Leading")
+) |>
+  ungroup() |>
+  mutate(across(is.double, ~round(.x, 2))) |>
+  mutate(Species = paste0("*", gsub("\\.", " ", species), "*"),
+         Elevation = paste0(emmean, " ± ", SE, "^", cld, "^")
+         ) |>
+  dplyr::select(Species, Parameters, scen, Elevation) |>
+  pivot_wider(names_from = scen, values_from = Elevation) |>
+  arrange(Species) |>
+  rename("Current" = current) |>
+  knitr::kable(align = "llrrrr")
+```
+
+\newpage
+
+```{r}
+#| label: tbl-slope-values
+#| tbl-cap: Elevational changes in species range parameters due to current (2010) and future (2040, 2070, 2100) climatic conditions. The values are estimated slope values (Estimate) with associated standard errors (SE) from linear regression of marginal means against the years representing climatic conditions.
+
+df_trailing <- tuk_trailing |> 
+  select(species, scen, emmean) |>
+  pivot_wider(names_from = scen, values_from = emmean) |>
+  mutate(Parameters = "Trailing")
+
+df_optimum <- tuk_optimum |> 
+  select(species, scen, emmean) |>
+  pivot_wider(names_from = scen, values_from = emmean) |>
+  mutate(Parameters = "Optimum")
+
+df_leading <- tuk_leading |> 
+  select(species, scen, emmean) |>
+  pivot_wider(names_from = scen, values_from = emmean) |>
+  mutate(Parameters = "Leading")
+
+bind_rows(df_trailing, df_optimum, df_leading) |> 
+  pivot_longer(cols = c(current, `2040`, `2070`, `2100`), 
+               names_to = "scen", values_to = "Elevation") |>
+  mutate(scen = ifelse(scen == "current", "2010", scen),
+         scen = as.numeric(scen)) |>
+  
+  group_by(species, Parameters) |>
+  nest() |>
+  mutate(Model = map(data, ~lm(Elevation ~ scen, data = .x) |> broom::tidy())
+         ) |> 
+  select(-data) |>
+  unnest(Model) |>
+  filter(term == "scen") |>
+  mutate(p.value = round(p.value, 3),
+         p.value = ifelse(p.value < 0.05, 
+                          yes = paste0("**", p.value, "**"), 
+                          no = as.character(p.value))) |>
+  mutate(species = paste0("*", gsub("\\.", " ", species), "*"),
+         Parameters = factor(Parameters, c("Trailing", "Optimum", "Leading"))) |>
+  select(-term) |>
+  mutate(across(is.double & !p.value, ~round(.x, 2))) |>
+  arrange(species) |>
+  knitr::kable(col.names = c("Species", "Parameters", "Estimate", "SE", "z", "p"),
+               align = "llrrrr")
+```
+
+```{r}
+# bind_rows(
+#   mutate(tuk_trailing, Parameters = "Trailing"),
+#   mutate(tuk_optimum,  Parameters = "Optimum"),
+#   mutate(tuk_leading,  Parameters = "Leading")
+# ) |>
+#   ungroup() |>
+#   mutate(across(is.double, ~round(.x, 2))) |>
+#   select(-c(SE, cld)) |>
+#   pivot_wider(names_from = scen, values_from = emmean) |>
+#   mutate(Shift = `2100` - current) |>
+#   ggplot(aes(x = Parameters, y = species, fill = Shift)) +
+#   geom_tile(color = "white") +
+#   geom_text(aes(label = round(Shift, 2))) +
+#   scale_fill_steps2(n.break = 7)
+```
+
+\newpage
+# Supplementary figures
+
+```{r}
+# DiagrammeR::grViz("clean_occ.gv") |>
+#   DiagrammeRsvg::export_svg() |> 
+#   charToRaw() |> 
+#   rsvg::rsvg_pdf("figs/s01-occ_cleaning.pdf")
+#   # rsvg::rsvg_png("figs/s01-occ_cleaning.png")
+```
+
+![Flow diagram showing the pre-processing and cleaning of geographical occurrences for selected species](figs/s01-occ_cleaning){#fig-occ-cleaning width=70%}
+
+```{r fig.width=7, fig.height=5}
+#| label: fig-species-occurrence
+#| fig-cap: Geographic distribution of cleaned occurrence dataset for selected species in the Western Himalayas.
+
+
+## Western Himalayan States
+wh <- st_read("data/site_states.gpkg", quiet = TRUE) |>
+  filter(STATE %in% c("Himachal Pradesh", "Uttarakhand"))
+
+read.csv("output/cleaned_occ.csv") |>
+  # count(species, sort = TRUE)
+  st_as_sf(coords = c("longitude", "latitude"), crs = "epsg:4326") |>
+  
+  ggplot() +
+  geom_sf(data = wh) +
+  geom_sf(color = "red", alpha = 0.25) +
+  facet_wrap(.~species, nrow = 3) +
+  theme_void() +
+  theme(strip.text = element_text(size = 9, hjust = 0, face = "italic"))
+
+## save the plots
+# ggsave("figs/s02-spec_occ.pdf", width = 7, height = 5)
+# ggsave("figs/s02-spec_occ.png", width = 7, height = 5, dpi = 600)
+```
+
+
+
+```{r fig.width=8, fig.height=6}
+#| label: fig-bio-current
+#| fig-cap: Bioclimatic variables used for modelling the potential habitat suitability (a--f). The mean diurnal air temperature range (bio2), isothermality (bio3), mean daily air temperatures of the wettest quarter (bio8), precipitation amount of the driest month (bio14), precipitation seasonality (bio15) and mean monthly precipitation amount of the warmest quarter (bio18) were downloaded from CHELSA database.
+
+## function to plot bio
+bio.plot <- function(bioname){
+  
+  ## get the bionumber
+  bionumber <- gsub("bio", "", bioname) |> as.numeric()
+  
+  ## Western Himalayan States
+  wh <- st_read("data/site_states.gpkg", quiet = TRUE) |>
+    filter(STATE %in% c("Himachal Pradesh", "Uttarakhand"))
+  
+  ## format bio data
+  bio <- rast("data/wh_bio_2010_current.tif", lyr = bionumber) |>
+    as.data.frame(xy = TRUE) |>
+    rename(bioname = 3)
+  
+  ## plot the map
+  ggplot() +
+    geom_raster(data = bio, aes(x, y, fill = bio[,3])) +
+    geom_sf(data = wh, fill = NA) +
+    theme_void() +
+    theme(legend.position = "top")
+}
+
+pb2 <- bio.plot("bio2") +
+  scale_fill_viridis_b(
+    option = "rocket", direction = 1, 
+    guide = guide_coloursteps(barwidth = 8, barheight = 0.75,
+                              label.position = "top",
+                              title = "bio2",
+                              title.vjust = 0.1)
+  )
+
+pb3 <- bio.plot("bio3") +
+  scale_fill_fermenter(
+    palette = "YlOrBr", direction = -1, n.breaks = 4,
+    guide = guide_coloursteps(barwidth = 8, barheight = 0.75,
+                              label.position = "top",
+                              title = "bio3",
+                              title.vjust = 0.1)
+  )
+
+pb8 <- bio.plot("bio8") +
+  scale_fill_fermenter(
+    palette = "PuOr", direction = -1, n.breaks = 4,
+    guide = guide_coloursteps(barwidth = 8, barheight = 0.75,
+                              label.position = "top",
+                              title = "bio8",
+                              title.vjust = 0.1)
+  )
+
+pb14 <- bio.plot("bio14") +
+  scale_fill_fermenter(
+    palette = "Blues", direction = 1,
+    guide = guide_coloursteps(barwidth = 8, barheight = 0.75, 
+                              label.position = "top",
+                              title = "bio14",
+                              title.vjust = 0.1)
+  )
+
+pb15 <- bio.plot("bio15") +
+  scale_fill_fermenter(
+    palette = "YlGnBu", direction = 1,
+    guide = guide_coloursteps(barwidth = 8, barheight = 0.75, 
+                              label.position = "top",
+                              title = "bio15",
+                              title.vjust = 0.1)
+  )
+
+pb18 <- bio.plot("bio18") +
+  scale_fill_fermenter(
+    palette = "Purples", direction = 1,
+    guide = guide_coloursteps(barwidth = 8, barheight = 0.75, 
+                              label.position = "top",
+                              title = "bio18",
+                              title.vjust = 0.1)
+  )
+
+## arrange plots
+cowplot::plot_grid(
+  pb2, pb3, pb8, pb14, pb15, pb18,
+  nrow = 2, labels = paste0(letters[1:6], ")"),
+  label_y = 0.96
+)
+
+## save the plots
+# ggsave("figs/s03-bio_current.pdf", width = 8, height = 6)
+# ggsave("figs/s03-bio_current.png", width = 8, height = 6, dpi = 600)
+```
+
+
+```{r fig.width=7, fig.height=6}
+#| label: fig-mp-bg-opt
+#| fig-cap: Effect of sampling method (disk vs random) and number of background points on the performance of MaxEnt models for *Mallotus philippensis* in Western Himalayas. The disk method sampled random points from the background defined with a minimum of 1 km and maximum of 50 km to the presence occurrence points. The initial dataset was randomly divided into 70% for training (Calibration) and 30% for testing (Validation). Each model was repeated three times for cross-validation. The performance of the model was assessed using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (ROC). The values represent the mean and SD of three replications. The shaded grey region indicates the selected number of background points (n &equals; 1000).
+
+
+read.csv("output/mallotus_background.csv") |>
+  pivot_longer(cols = c(calibration, validation),
+               names_to = "dataset", values_to = "y") |>
+  select(PA, y, dataset, metric.eval, pa.meth) |>
+  mutate(dataset = str_to_title(dataset)) |>
+  group_by(PA, dataset, metric.eval, pa.meth) |>
+  rstatix::get_summary_stats("y", type = "mean_sd") |>
+
+  ggplot(aes(x = PA, y = mean, ymin = mean - sd, ymax = mean + sd,
+             fill = pa.meth, shape = pa.meth)) +
+  geom_rect(aes(xmin = 2.5, xmax = 3.5, ymin = -Inf, ymax = Inf), 
+            fill = "grey90", alpha = 0.2) +
+  geom_pointrange(position = position_dodge(0.5), size = 0.75,
+                  stroke = 0.5) +
+  facet_grid(metric.eval ~ dataset) +
+  scale_fill_manual(values = c("#e69f00", "#56b4e9"), name = "Method") +
+  scale_shape_manual(values = c(21, 24), name = "Method") +
+  scale_x_discrete(labels = c(250, 500, 1000, 2000, 5000)) +
+  labs(x = "Background points", y = "") +
+  theme_bw(base_size = 14) +
+  theme(panel.grid = element_blank(),
+        panel.spacing = unit(5, "mm"),
+        legend.title = element_blank(),
+        legend.position = c(0.005, 0.525), 
+        legend.justification = c(0, 0),
+        legend.background = element_rect(colour = "grey", linewidth = 0.25),
+        strip.background = element_rect(fill = "grey90"),
+        strip.text = element_text(face = "bold"))
+
+## save the plot
+# ggsave("figs/s04-background_points.pdf", width = 7, height = 6)
+# ggsave("figs/s04-background_points.png", width = 7, height = 6, dpi = 600)
+```
+
+```{r}
+## plot continuous habitat suitability
+# source("R/10-plot_hab_suit.R")
+```
+
+![Habitat suitability for selected species under current and future (2040, 2070 and 2100) climatic conditions over Western Himalayas. The predictions indicate the ensemble model of all individual models with a TSS of greater than 0.7 using the weighted mean averaging.](figs/s05-hab_suit){#fig-hab-suit}
+
+```{r fig.width=7, fig.height=5}
+#| label: fig-elev-change
+#| fig-cap: Elevational distribution of pixels indicating (a) gain, (b) stable, and (c) loss in assemblage level habitat suitability (species richness) under future climatic conditions.
+
+## prepare the elevation change data
+elev_change <- read.csv("output/richness_elevation.csv") |>
+  select(scen, richness, elevation) |>
+  mutate(richness = case_when(richness <  0  ~"c) Loss",
+                              richness == 0  ~"b) Stable",
+                              richness >  0  ~"a) Gain"),
+         elevation = cut(elevation, seq(0, 5000, 100), seq(100, 5000, 100)),
+         elevation = as.numeric(as.character(elevation))/1e3) |>
+  group_by(richness) |>
+  count(elevation) |>
+  mutate(perc_n = n/sum(n)*100)
+
+## plot pixels distribution for richness gains
+p_gain <- elev_change |>
+  filter(richness == "a) Gain") |>
+  ggplot(aes(x = elevation, y = perc_n)) +
+  geom_bar(stat = "identity", fill = "#5ab4ac", width = 0.075) +
+  xlim(0, 5) +
+  theme(axis.title = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+## plot pixels distribution for stable richness
+p_stable <- elev_change |>
+  filter(richness == "b) Stable") |>
+  ggplot(aes(x = elevation, y = perc_n)) +
+  geom_bar(stat = "identity", fill = "grey", width = 0.075) +
+  xlim(0, 5) +
+  labs(y = "Pixels (%)") +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+## plot pixels distribution for richness loss
+p_loss <- elev_change |>
+  filter(richness == "c) Loss") |>
+  ggplot(aes(x = elevation, y = perc_n)) +
+  geom_bar(stat = "identity", fill = "#d8b365", width = 0.075) +
+  xlim(0, 5) +
+  labs(x = "Elevation (km)") +
+  theme(axis.title.y = element_blank())
+
+## arrange the plots
+cowplot::plot_grid(
+  p_gain, p_stable, p_loss, 
+  ncol = 1, align = "v",
+  labels = paste0(letters[1:3], ")"), 
+  label_x = 0.075, label_y = 0.97,
+  rel_heights = c(0.3, 0.3, 0.4)
+)
+
+## save the plot
+# ggsave("figs/s06-elev_rich_change.pdf", width = 7, height = 6)
+# ggsave("figs/s06-elev_rich_change.png", width = 7, height = 6, dpi = 600)
+```
+
+```{r}
+## plot single response curves
+# source("R/11-plot_resp_curve_single.R")
+```
+
+![Plot of the response curves of six environmental variables used to model habitat suitability of selected species. Model predictions were plotted against each environmental variable while holding values of all other variables constant at their respective means. The grey lines represent the individual response curves from the evaluated 14 models (12 individual + 2 ensemble models). The coloured thick smooth line was fitted using the generalised additive model (GAM) with a shrinkage version of penalised cubic spline. Temperature-related variables are shown with solid red lines and precipitation-related variables are shown with solid blue line. The right y-axis represent the probability of suitable habitat and x-axis represent the environmental predictors in their respective units.](figs/s07-resp_curve_single){#fig-resp-curve-single width=75%}
+
+\newpage
+# ODMAP protocol
+
+```{r}
+#| tbl-colwidths: [25, 75]
+
+read.csv("odmap_protocol.csv") |>
+  mutate(Description = ifelse(
+    element == "", "",
+    paste0("**", element, "**: ", Value)
+  )) |>
+  rename("Element" = subsection) |>
+  select(Element, Description) |>
+  knitr::kable(booktabs = TRUE, longtable = TRUE, linesep = "")
+
+  # kableExtra::kbl(format = "markdown") |>
+  # column_spec(1, width = "1.5in") |>
+  # column_spec(2, width = "4.5in") |>
+  # row_spec(c(1, 27, 61, 75, 79), background = "#d9e2f3") |>
+  # collapse_rows(columns = 1, valign = "top")
+```
+
+\newpage
+# Session Info
+
+```{r}
+sessioninfo::platform_info() |>
+  as.data.frame() |>
+  t() |>
+  as.data.frame() |>
+  rownames_to_column("setting") |>
+  rename("value" = V1) |>
+  knitr::kable()
+```
+
+```{r}
+sessioninfo::package_info() |>
+  as.tibble() |>
+  select(-c(ondiskversion, path, loadedpath, library)) |>
+  mutate(package = paste0("`", package, "`")) |>
+  rename("version" = loadedversion) |>
+  knitr::kable()
+```
+
+
+\newpage
+# References {.unnumbered}

@@ -1,0 +1,5 @@
+"full.name","merged.by.PA","merged.by.run","merged.by.algo","filtered.by","algo","metric.eval","cutoff","sensitivity","specificity","calibration","validation","evaluation"
+"Quercus.leucotrichophora_EMcaByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMca","TSS",793,100,95.224,0.952,NA,NA
+"Quercus.leucotrichophora_EMcaByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMca","ROC",791.5,100,95.224,0.982,NA,NA
+"Quercus.leucotrichophora_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","TSS",327,100,94.222,0.942,NA,NA
+"Quercus.leucotrichophora_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","ROC",330.5,100,94.255,0.976,NA,NA

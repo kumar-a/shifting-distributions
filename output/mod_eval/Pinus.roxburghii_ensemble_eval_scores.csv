@@ -1,0 +1,5 @@
+"full.name","merged.by.PA","merged.by.run","merged.by.algo","filtered.by","algo","metric.eval","cutoff","sensitivity","specificity","calibration","validation","evaluation"
+"Pinus.roxburghii_EMcaByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMca","TSS",783,100,84.348,0.843,NA,NA
+"Pinus.roxburghii_EMcaByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMca","ROC",785.5,100,84.348,0.924,NA,NA
+"Pinus.roxburghii_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","TSS",290,100,83.077,0.831,NA,NA
+"Pinus.roxburghii_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","ROC",293.5,100,83.11,0.912,NA,NA

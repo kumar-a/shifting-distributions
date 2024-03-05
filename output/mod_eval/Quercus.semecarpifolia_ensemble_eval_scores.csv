@@ -1,0 +1,5 @@
+"full.name","merged.by.PA","merged.by.run","merged.by.algo","filtered.by","algo","metric.eval","cutoff","sensitivity","specificity","calibration","validation","evaluation"
+"Quercus.semecarpifolia_EMcaByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMca","TSS",501.5,100,95.391,0.954,NA,NA
+"Quercus.semecarpifolia_EMcaByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMca","ROC",500,100,95.391,0.986,NA,NA
+"Quercus.semecarpifolia_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","TSS",98,100,93.587,0.937,NA,NA
+"Quercus.semecarpifolia_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","ROC",102.5,100,93.721,0.985,NA,NA

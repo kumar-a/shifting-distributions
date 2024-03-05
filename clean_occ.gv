@@ -1,0 +1,17 @@
+digraph G {
+    layout="neato" 
+    node[shape="Mrecord", style="filled", fontname="Helvetica", width=4, fillcolor="grey90", color="grey10"]
+    
+    gbif[label="GBIF\n(n = 412)",          width=1, pos="-1.5, 6!"];
+    lite[label="Literature\n(n = 1,325)",  width=1, pos=" 0.0, 6!"];
+    fiel[label="Field\n(n = 139)",         width=1, pos=" 1.5, 6!"];
+    
+    tota[label="Total occurrence for chosen 15 species\n(n = 1,876)",    pos="0, 5!"];
+    stud[label="Occurrence within Western Himalayas\n(n = 1,762)",       pos="0, 4!"];
+    tree[label="Occurrence within \>50% tree cover\n(n = 1,457)",        pos="0, 3!"];
+    elev[label="Occurrence within known elevational range\n(n = 1,224)", pos="0, 2!"];
+    thin[label="Unique occurrence within 0.2 degree cells\n(n = 379)",   pos="0, 1!"];
+    spec[label="Occurrence for finally selected 10 species\n(n = 308)",  pos="0, 0!"];
+    
+    {gbif, lite, fiel} -> tota -> stud -> tree -> elev -> thin -> spec
+}

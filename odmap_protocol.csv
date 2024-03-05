@@ -1,0 +1,83 @@
+id,subsection,element,Value
+1,**Overview**,,
+2,Authorship,Study title,Climate-driven elevational range dynamics of dominant trees in the Western Himalayas
+3,Authorship,Author names,Abhishek Kumar; Meenu Patil; Pardeep Kumar; Anand Narain Singh
+4,Authorship,Contact,<abhikumar.pu@gmail.com>
+5,Authorship,Study link,<https://github.com/kumar-a/shifting-distributions> 
+6,Model objective,Model objective,Forecast and transfer
+7,Model objective,Target output,Suitable vs. unsuitable habitat (binary maps of potential presence)
+8,Focal Taxon,Focal Taxon,Trees
+9,Location,Location,Indian Western Himalayas
+10,Scale,Spatial extent,xmin = 75.50; xmax = 81.06; ymin = 28.70; ymax = 33.27
+11,Scale,Spatial resolution,1 km
+12,Scale,Temporal extent,Current = 1981-2010; Future1 = 2011-2040; Future2 = 2041-2070; Future3 = 2071-2100
+13,Scale,Temporal resolution,30 yrs
+14,Scale,Boundary,political; rectangle
+15,Biodiversity data,Observation type,citizen science; field survey
+16,Biodiversity data,Response type,presence-only
+17,Predictors,Predictor types,climatic
+18,Hypotheses,Hypotheses,"Climatic variables have been frequently suggested as determinants of regional-scale distributions of plants [@Kreft2007; @Qian2022]. Specific environmental variables that determine the distribution of selected tree species were unknown. Therefore, this study used the 19 bioclimatic variables that have been frequently included to model species distribution [@Bobrowski2021; @Guisan2017]. However, this study did not include elevation, slope, and aspect as predictors because they were inferred to be only indirectly related to the distribution and physiology of plants [@Korner2007]. Further, topographic heterogeneity may be less important than the climatic factors at larger scales."
+19,Assumptions,Model assumptions,Relevant ecological drivers (or proxies) are included; Species are at (pseudo-) equilibrium with their environment; Sampling is adequate and representative (and any biases are accounted for/corrected); The correlation structure between predictors does not change between source and target landscape; The model extrapolates in a biologically sensible manner; Detectability does not change across habitat gradients; Species are adequately and correctly identified
+20,Algorithms,Modelling techniques,"MaxEnt was chosen due to competitive performance on small sample sizes and ease of use, and its outputs were approximated to true probabilities using published equations."
+21,Algorithms,Model complexity,"Linear, Quadratic, and hinge features were used. The product and threshold features will be used if the number of presences exceeds 80 under the default settings. Model settings were chosen to yield intermediately complex response surfaces but prevent excessive overfitting."
+22,Algorithms,Model ensembles,We combined the 12 models (3 pseudo-absence sets &times; 4 cross-validation runs) to ensemble model predictions using the committee averaging (EMca) and weighted mean (EMwmean) algorithms.
+23,Workflow,Model workflow,"Compiled species occurrences were cleaned and pre-processed to minimise the bias. Variables with a VIF greater than 10 were considered correlated [@Guisan2017] and excluded from further analysis to minimise the bias due to multicollinearity among predictors [@Dormann2013]. This VIF-based variable selection identified six bioclimatic variables: bio2, bio3, bio8, bio14, bio15, and bio18. Un-tuned MaxEnt models were used because this study sought to model multiple species simultaneously, and it was impractical to build species-specific tuned models [@Merow2013]. We build total 12 individual models (3 pseudo-absence sets &times; 4 cross-validation runs) and 2 ensemble models for each species. The predictive accuracy of models was evaluated using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (AUC~ROC~). The presence-absence maps were analysed to investigate the predicted changes suitable habitat, elevational distribution, range dynamics, and species richness."
+24,Software,Software,The MaxEnt models were implemented in the R statistical environment version 4.3.1 [@R-base] using the `biomod2` package version 4.2.4 [@R-biomod2] together with the standalone java-based MaxEnt software version 3.4.3 [@Phillips2006].
+25,Software,Code availability,<https://github.com/kumar-a/shifting-distributions> 
+26,Software,Data availability,<https://github.com/kumar-a/shifting-distributions> 
+27,**Data**,,
+28,Biodiversity data,Taxon names,Cedrus deodara; Lyonia ovalifolia; Mallotus philippensis; Pinus roxburghii; Quercus lanata; Quercus leucotrichophora; Quercus semecarpifolia; Rhododendron arboretum; Shorea robusta; Taxus wallichiana
+29,Biodiversity data,Taxonomic reference system,"The World Checklist of Vascular Plants (WCVP) was followed to standardise all the botanical names and their authorities [@Govaerts2021]. Finally, all the plant names and their families were updated by matching them with a static copy of WCVP (version 10 dated 27 October 2022) using the package `rWCVP` version 1.2.4 [@R-rWCVP]."
+30,Biodiversity data,Ecological level,species; communities
+31,Biodiversity data,Data sources,"A database of geographical occurrences was compiled for selected species by combining data from the Global Biodiversity Information Facility database on 21 September 2023 [@GBIF2023], field surveys, and published literature (see Table S2)."
+32,Biodiversity data,Sampling design,specific design is unknown; random
+33,Biodiversity data,Sample size,20-55 (see Table 1)
+34,Biodiversity data,Clipping,Study area; Indian Western Himalayas
+35,Biodiversity data,Scaling,Unique occurrence within 0.2-degree cells (approx 22.2 km)
+36,Biodiversity data,Cleaning,"Only those occurrence records were retained that (i) were inside the study area, (ii) corresponded to a tree cover of more than 50% at ~30 arc-sec resolution [@Zanaga2021], (iii) were within the observed elevational range of the species, (iv) randomly selected unique record within 0.2-degrees (~22.22 km) cells, and (v) species with at least 20 cleaned species occurrences (see Figure S1)."
+37,Biodiversity data,Absence data,Not applicable
+38,Biodiversity data,Background data,"We used 1,000 randomly sampled locations from the full extent of the study area as background points. The background points were determined by comparing the model performances for the method (disk vs. random) and the number of background points (250, 500, 1000, 2000, and 5000) for Mallotus philippensis in the study area (Figure S4)."
+39,Biodiversity data,Errors and biases,Species occurrences were cleaned and pre-processed to minimise error rates and biases.
+40,Data partitioning,Training data,We randomly selected 70% of the data for model calibration.
+41,Data partitioning,Validation data,The remaining 30% is for validation of the predictions.
+42,Data partitioning,Test data,A truly independent external dataset was unavailable.
+43,Predictor variables,Predictor variables,Mean diurnal air temperature range (bio2); isothermality (bio3); mean daily air temperatures of the wettest quarter (bio8); precipitation amount of the driest month (bio14); precipitation seasonality (bio15); and mean monthly precipitation amount of the warmest quarter (bio18).
+44,Predictor variables,Data sources,The climatic variables were downloaded at 30-arc-sec (~1 km) resolution from the CHELSA (<https://chelsa-climate.org/>) database version 2.1 [@Karger2017].
+45,Predictor variables,Spatial extent,xmin = 75.50; xmax = 81.06; ymin = 28.70; ymax = 33.27
+46,Predictor variables,Spatial resolution,30 arc-sec (~1 km)
+47,Predictor variables,Coordinate reference system,EPSG 4326
+48,Predictor variables,Temporal extent,Current = 1981-2010; Future1 = 2011-2040; Future2 = 2041-2070; Future3 = 2071-2100
+49,Predictor variables,Temporal resolution,30 years
+50,Predictor variables,Data processing,none
+51,Predictor variables,Errors and biases,Assumed low errors and biases
+52,Predictor variables,Dimension reduction,Variables with a variance inflation factor (VIF) greater than 10 were considered correlated [@Guisan2017] and excluded from further analysis to minimise the bias due to multicollinearity among predictors [@Dormann2013].
+53,Transfer data,Data sources,The future climatic variables were downloaded at 30-arc-sec (~1 km) resolution from the CHELSA (<https://chelsa-climate.org/>) database version 2.1 [@Karger2017].
+54,Transfer data,Spatial extent,xmin = 75.50; xmax = 81.06; ymin = 28.70; ymax = 33.27
+55,Transfer data,Spatial resolution,30 arc-sec (~1 km)
+56,Transfer data,Temporal extent,Future1 = 2011-2040; Future2 = 2041-2070; Future3 = 2071-2100
+57,Transfer data,Temporal resolution,30 years
+58,Transfer data,Models and scenarios,The GFDL-ESM4 model and the SSP1-2.6 scenarios were used [@Zhao2018].
+59,Transfer data,Data processing,none
+60,Transfer data,Novelty,none
+61,**Model**,,
+62,Variable pre-selection,Variable pre-selection,"We identified six bioclimatic variables based on variance inflation factor. However, this study did not include elevation, slope, and aspect as predictors because we deemed them to be only indirectly related to the distribution and physiology of plants [@Korner2007]. Further, we deemed topographic heterogeneity as less important than the climatic factors at regional scales."
+63,Multicollinearity,Multicollinearity,Variables with a VIF greater than 10 were considered correlated [@Guisan2017] and excluded from further analysis to minimise the bias due to multicollinearity among predictors [@Dormann2013]. This VIF-based variable selection identified six bioclimatic variables.
+64,Model settings,Model fitting,Default settings for MaxEnt
+65,Model settings,featureSet,linear = TRUE; quadratic = TRUE; product = TRUE; threshold = TRUE; hinge = TRUE
+66,Model settings,featureRule,lq2lqptthreshold = 80; l2lqthreshold = 10; hingethreshold = 15
+67,Model settings,regularization,beta_threshold = -1.0; beta_categorical = -1.0; beta_lqp = -1.0; beta_hinge = -1.0; betamultiplier = 1
+68,Model settings,other,memory_allocated = 1024; maximumiterations = 500; defaultprevalence = 0.5
+69,Model settings,Extrapolation,Predictions bounded by clamping
+70,Model estimates,Variable importance,"Each environmental variable was shuffled, and model predictions were computed using the shuffled variable to estimate the importance of environmental variables [@R-biomod2; @Thuiller2009]. The Pearson's correlation coefficient (r) was calculated between the reference predictions and the predictions from the shuffled variable. The final variable importance score is calculated by subtracting Pearson's correlation from one (1 - r)."
+71,Model ensembles,Model selection,"Ensemble models were built for each species to summarise the performances of the 12 individual models (3 pseudo-absence sets &times; 4 cross-validation runs). Since the performance of the ensemble model depends on the quality of individual models, a threshold TSS score of 0.7 was used to exclude low-quality models (TSS < 0.7), perform binary transformation for EMca (presence = TSS > 0.7 and absence = TSS < 0.7) and define model weights for EMwmean [@Nikkel2023]. "
+72,Model ensembles,Ensemble methods,"Two popular methods were used for building ensemble models [@Hao2019]: committee averaging (EMca) and weighted mean (EMwmean). The EMca approach first transforms the probabilities from selected models into the binary species presence (1) and absence (0) based on a threshold defined by maximising the evaluation metric score on a testing dataset. Then, it takes the average of binary predictions from all selected models. Thus, the committee averaging a score of 0 or 1 means all models agree, whereas any values between 0 and 1 indicate at least one model disagrees with predictions. On the other hand, the EMwmeans approach weights the probabilities from each model based on the evaluation score and then sums all the probabilities. The individual model with better performance receives higher weight and, therefore, has higher importance in the ensemble. "
+73,Non-independence,Spatial autocorrelation,Randomly selected unique record within 0.2-degrees (~22.22 km) cells to minimise spatial dependence
+74,Threshold selection,Threshold selection,The threshold value maximising the true skill statistic (TSS) is considered the optimum threshold to convert probabilities into binary species presence and absence [@Liu2013].
+75,**Assessment**,,
+76,Performance statistics,Training data,The predictive accuracy of models was evaluated using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (AUC~ROC~). 
+77,Performance statistics,Validation data,The predictive accuracy of models was evaluated using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (AUC~ROC~). 
+78,Plausibility check,Response curves,The evaluation strip procedure was used to analyse how each environmental variable influences the probability of species' presence or habitat suitability [@Elith2005].
+79,**Prediction**,,
+80,Prediction output,Prediction unit,potential presence and absence 
+81,Prediction output,Post-processing,none
+82,Uncertainty quantification,Model uncertainty,Model performance was compared to assess uncertainty due to random background sampling and random splitting of dataset. Ensembling was performed for good quality models selected by thresholding.
