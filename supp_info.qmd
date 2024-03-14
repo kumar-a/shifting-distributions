@@ -27,7 +27,7 @@ author:
     affiliation: Panjab University, Chandigarh
 
 bibliography: refs.bib
-csl: chicago-author-date.csl
+csl: ecological-applications.csl
 
 format: 
   # html:
@@ -49,9 +49,6 @@ format:
     citecolor: "#0000ff"
     default-image-extension: pdf
     code-block-bg: true
-    include-in-header:
-      - text: |
-          \renewcommand{\thesection}{S\arabic{section}}
   
   docx:
     reference-doc: ecol-app.docx
@@ -61,12 +58,11 @@ format:
     default-image-extension: png
     
 crossref: 
-  tbl-title: "Table S"
+  title-delim: "  "
+  fig-title:  "FIGURE S"  ## caption title
+  fig-prefix: "Figure S"  ## inline title
+  tbl-title:  "TABLE S"
   tbl-prefix: "Table S"
-  tbl-labels: arabic
-  fig-title: "Figure S"
-  fig-prefix: "Figure S"
-  fig-labels: arabic
 ---
 
 ```{r setup, include=FALSE}
@@ -102,12 +98,22 @@ theme_set(
 )
 ```
 
+**Affiliation:** Soil Ecosystem and Restoration Ecology Lab, Department of Botany, Panjab University, Chandigarh 160014, INDIA
+
+**Correspondence:** Anand Narain Singh. Email: <dranand1212@gmail.com>; <ansingh@pu.ac.in>
+
+**Contact author:** Abhishek Kumar. Email: <abhikumar.pu@gmail.com>
+
+**Co-first authors:** Abhishek Kumar and Meenu Patil are equal contributors to this work and designated as co-first authors.
+
+**Open Research Statement:** Data and `R` codes are provided as private-for-peer review via the following link: <https://github.com/kumar-a/shifting-distributions>. Upon acceptance data will be archived in FigShare or Zenodo.
+
 \newpage
-# Supplementary tables
+# S1 Supplementary tables
 
 ```{r}
 #| label: tbl-occ-literature
-#| tbl-cap: Summary of literature sources used to obtain occurrence data for selected tree species in Western Himalayas. 
+#| tbl-cap: Summary of literature sources used to obtain occurrence data for selected tree species in the Western Himalayas. 
 
 
 read.csv("output/cleaned_occ.csv") |>
@@ -140,7 +146,7 @@ read.csv("output/cleaned_occ.csv") |>
 
 ```{r}
 #| label: tbl-net-change
-#| tbl-cap: Predicted net change in habitat suitability for selected species under future (2040, 2070, and 2100) climatic conditions. The values represent the percentage of pixels in study area and species are arranged according to net change by the end of the century (2100). 
+#| tbl-cap: Predicted net change in habitat suitability for selected species under future (2040, 2070, and 2100) climatic conditions. The values represent the percentage of pixels in the study area, and species are arranged according to net change by the end of the century (2100). 
 
 
 list.files(
@@ -166,7 +172,7 @@ list.files(
 
 ```{r}
 #| label: tbl-elev-anova
-#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070 and 2100) on elevational distribution for each species. The type-II ANOVA was used to determine the significance of effects and generalised eta squared (&eta;^2^) was used as effect size.
+#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070, and 2100) on elevational distribution for each species. The type-II ANOVA was used to determine the significance of effects, and generalized eta squared (&eta;^2^) was used as effect size.
 
 
 read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
@@ -186,7 +192,7 @@ read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
 
 ```{r}
 #| label: tbl-elev-comp
-#| tbl-cap: Comparison of average elevation under current and future climatic condictions for selected species in Western Himalayas. The values (rounded to integers) represent the estimated marginal mean elevation (in metres) and associated standard error (SE) across all predicted pixels. The significance of difference was determined using the t-test with Tukey’s adjustment for multiple comparison (equivalent to Tukey’s test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
+#| tbl-cap: Comparison of average elevation under current and future climatic conditions for selected species in the Western Himalayas. The values represent the estimated marginal mean elevation (in meters) and associated standard error (SE) across all predicted pixels. The significance of difference was determined using the t-test with Tukey's adjustment for multiple comparisons (equivalent to Tukey's test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
 
 
 read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
@@ -215,7 +221,7 @@ read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
 
 ```{r}
 #| label: tbl-range-param-anova
-#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070 and 2100) on elevation range parameters. The type-II ANOVA was used to test the significance of effects and generalised eta squared (&eta;^2^) was used as effect size.
+#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070, and 2100) on elevation range parameters. The type-II ANOVA was used to test the significance of effects, and generalized eta squared (&eta;^2^) was used as effect size.
 
 
 ## optimum elevation
@@ -344,7 +350,7 @@ tuk_leading <- elev_range_param |>
 
 ```{r}
 #| label: tbl-range-param-comp
-#| tbl-cap: Comparison of elevational range parameters under current and future climatic condictions for selected species in Western Himalayas. The values represent the estimated marginal mean elevation (in metres) and associated standard error (SE). The significance of difference was determined using the t-test with Tukey’s adjustment for multiple comparison (equivalent to Tukey’s test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
+#| tbl-cap: Comparison of elevational range parameters under current and future climatic conditions for selected species in the Western Himalayas. The values represent the estimated marginal mean elevation (in meters) and associated standard error (SE). The significance of difference was determined using the t-test with Tukey's adjustment for multiple comparisons (equivalent to Tukey's test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
 
 
 bind_rows(
@@ -368,7 +374,7 @@ bind_rows(
 
 ```{r}
 #| label: tbl-slope-values
-#| tbl-cap: Elevational changes in species range parameters due to current (2010) and future (2040, 2070, 2100) climatic conditions. The values are estimated slope values (Estimate) with associated standard errors (SE) from linear regression of marginal means against the years representing climatic conditions.
+#| tbl-cap: Elevational changes in species range parameters due to current (2010) and future (2040, 2070, and 2100) climatic conditions. The values are estimated slope values (Estimate) with associated standard errors (SE) from linear regression of marginal means against the years representing climatic conditions.
 
 df_trailing <- tuk_trailing |> 
   select(species, scen, emmean) |>
@@ -429,7 +435,7 @@ bind_rows(df_trailing, df_optimum, df_leading) |>
 ```
 
 \newpage
-# Supplementary figures
+# S2 Supplementary figures
 
 ```{r}
 # DiagrammeR::grViz("clean_occ.gv") |>
@@ -439,7 +445,7 @@ bind_rows(df_trailing, df_optimum, df_leading) |>
 #   # rsvg::rsvg_png("figs/s01-occ_cleaning.png")
 ```
 
-![Flow diagram showing the pre-processing and cleaning of geographical occurrences for selected species](figs/s01-occ_cleaning){#fig-occ-cleaning width=70%}
+![Flow diagram showing the pre-processing and cleaning of geographical occurrences for selected species.](figs/s01-occ_cleaning){#fig-occ-cleaning width=70%}
 
 ```{r fig.width=7, fig.height=5}
 #| label: fig-species-occurrence
@@ -470,7 +476,7 @@ read.csv("output/cleaned_occ.csv") |>
 
 ```{r fig.width=8, fig.height=6}
 #| label: fig-bio-current
-#| fig-cap: Bioclimatic variables used for modelling the potential habitat suitability (a--f). The mean diurnal air temperature range (bio2), isothermality (bio3), mean daily air temperatures of the wettest quarter (bio8), precipitation amount of the driest month (bio14), precipitation seasonality (bio15) and mean monthly precipitation amount of the warmest quarter (bio18) were downloaded from CHELSA database.
+#| fig-cap: Bioclimatic variables used for modeling the potential habitat suitability (a--f). The mean diurnal air temperature range (bio2), isothermality (bio3), mean daily air temperatures of the wettest quarter (bio8), precipitation amount of the driest month (bio14), precipitation seasonality (bio15) and mean monthly precipitation amount of the warmest quarter (bio18) were downloaded from CHELSA database.
 
 ## function to plot bio
 bio.plot <- function(bioname){
@@ -564,7 +570,7 @@ cowplot::plot_grid(
 
 ```{r fig.width=7, fig.height=6}
 #| label: fig-mp-bg-opt
-#| fig-cap: Effect of sampling method (disk vs random) and number of background points on the performance of MaxEnt models for *Mallotus philippensis* in Western Himalayas. The disk method sampled random points from the background defined with a minimum of 1 km and maximum of 50 km to the presence occurrence points. The initial dataset was randomly divided into 70% for training (Calibration) and 30% for testing (Validation). Each model was repeated three times for cross-validation. The performance of the model was assessed using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (ROC). The values represent the mean and SD of three replications. The shaded grey region indicates the selected number of background points (n &equals; 1000).
+#| fig-cap: Effect of sampling method (disk vs random) and the number of background points on the performance of MaxEnt models for *Mallotus philippensis* in the Western Himalayas. The disk method sampled random points from the background defined with a minimum of 1 km and a maximum of 50 km to the presence occurrence points. The initial dataset was randomly divided into 70% for training (Calibration) and 30% for testing (Validation). Each model was repeated three times for cross-validation. The performance of the model was assessed using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (ROC). The values represent the mean and SD of three replications. The shaded grey region indicates the finally selected number of background points (n &equals; 1000).
 
 
 read.csv("output/mallotus_background.csv") |>
@@ -606,7 +612,7 @@ read.csv("output/mallotus_background.csv") |>
 # source("R/10-plot_hab_suit.R")
 ```
 
-![Habitat suitability for selected species under current and future (2040, 2070 and 2100) climatic conditions over Western Himalayas. The predictions indicate the ensemble model of all individual models with a TSS of greater than 0.7 using the weighted mean averaging.](figs/s05-hab_suit){#fig-hab-suit}
+![Habitat suitability for selected species under current and future (2040, 2070, and 2100) climatic conditions over the Western Himalayas. The predictions indicate the ensemble model of all individual models with a TSS greater than 0.7 using the weighted mean averaging (EMwmean).](figs/s05-hab_suit){#fig-hab-suit}
 
 ```{r fig.width=7, fig.height=5}
 #| label: fig-elev-change
@@ -673,10 +679,10 @@ cowplot::plot_grid(
 # source("R/11-plot_resp_curve_single.R")
 ```
 
-![Plot of the response curves of six environmental variables used to model habitat suitability of selected species. Model predictions were plotted against each environmental variable while holding values of all other variables constant at their respective means. The grey lines represent the individual response curves from the evaluated 14 models (12 individual + 2 ensemble models). The coloured thick smooth line was fitted using the generalised additive model (GAM) with a shrinkage version of penalised cubic spline. Temperature-related variables are shown with solid red lines and precipitation-related variables are shown with solid blue line. The right y-axis represent the probability of suitable habitat and x-axis represent the environmental predictors in their respective units.](figs/s07-resp_curve_single){#fig-resp-curve-single width=75%}
+![Plot of the response curves of six environmental variables used to model habitat suitability of selected species. Model predictions were plotted against each environmental variable while holding the values of all other variables constant at their respective means. The grey lines represent the individual response curves from the evaluated 14 models (12 individual + 2 ensemble models). The smooth line (thick and colored) was fitted using the generalized additive model (GAM) with a shrinkage version of the penalized cubic spline. Temperature-related variables are shown with solid red lines and precipitation-related variables with solid blue lines. The right y-axis represents the probability of a suitable habitat, and the x-axis represents the environmental predictors in their respective units.](figs/s07-resp_curve_single){#fig-resp-curve-single width=70%}
 
 \newpage
-# ODMAP protocol
+# S3 ODMAP protocol
 
 ```{r}
 #| tbl-colwidths: [25, 75]
@@ -697,8 +703,26 @@ read.csv("odmap_protocol.csv") |>
   # collapse_rows(columns = 1, valign = "top")
 ```
 
+
+```{r}
+# library(kableExtra)
+# 
+# read.csv("odmap_protocol.csv") |>
+#   mutate(Description = ifelse(
+#     element == "", "",
+#     paste0("**", element, "**: ", Value)
+#   )) |>
+#   rename("Element" = subsection) |>
+#   select(Element, Description) |>
+#   kbl(format = "markdown", booktabs = TRUE, longtable = TRUE) |>
+#   column_spec(column = 1, width ="1.5in") |>
+#   column_spec(column = 2, width ="4.5in") |>
+#   row_spec(row = c(1, 27, 61, 75, 79), background = "#d9e2f3")
+```
+
+
 \newpage
-# Session Info
+# S4 Session Info
 
 ```{r}
 sessioninfo::platform_info() |>

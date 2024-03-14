@@ -27,6 +27,7 @@ author:
     affiliation: Panjab University, Chandigarh
 
 bibliography: refs.bib
+csl: ecological-applications.csl
 
 format: 
   # html:
@@ -55,6 +56,13 @@ format:
     link-bibliography: true
     fig-dpi: 600
     default-image-extension: png
+    
+crossref: 
+  title-delim: "  "
+  fig-title:  "FIGURE"  ## caption title
+  fig-prefix: "Figure"  ## inline title
+  tbl-title:  "TABLE"
+  tbl-prefix: "Table"
 ---
 
 ```{r setup, include=FALSE}
@@ -64,7 +72,7 @@ knitr::opts_chunk$set(
 )
 
 ## load packages
-library(biomod2)        ## species distribution modelling
+library(biomod2)        ## species distribution modeling
 library(emmeans)        ## estimate marginal means
 library(sf)             ## vector data handling
 library(terra)          ## raster data handling
@@ -90,23 +98,35 @@ theme_set(
 )
 ```
 
+**Affiliation:** Soil Ecosystem and Restoration Ecology Lab, Department of Botany, Panjab University, Chandigarh 160014, INDIA
+
+**Correspondence:** Anand Narain Singh. Email: <dranand1212@gmail.com>; <ansingh@pu.ac.in> 
+
+**Contact author:** Abhishek Kumar. Email: <abhikumar.pu@gmail.com>
+
+**Co-first authors:** Abhishek Kumar and Meenu Patil are equal contributors to this work and designated as co-first authors.
+
+**Open Research Statement:** Data and `R` codes are provided as private-for-peer review via the following link: <https://github.com/kumar-a/shifting-distributions>. Upon acceptance data will be archived in FigShare or Zenodo.
+
+
+\newpage
 # Abstract {.unnumbered}
 
-Understanding species redistributions in response to climate change is crucial for prioritising conservation efforts and developing effective biodiversity management plan. Since responses to climate change can be highly variable and species-specific, this study investigated the elevational range dynamics of ten dominant tree species in Western Himalayas. Considering the lack of historical data, we used ensemble MaxEnt modelling to predict the habitat suitability for current future climatic scenarios (2040, 2070 and 2100). Our results indicated range contractions for *Cedrus deodara*, *Pinus roxburghii*, *Quercus lanata*, *Quercus semecarpifolia*, and *Rhododendron arboreum*; and an upward shift in distribution of *Lyonia ovalifolia*, *Mallotus philippensis*, and *Quercus leucotrichophora*. The elevation range of *Shorea robusta* and *Taxus wallichiana* can lean towards its higher and lower elevations, respectively. Further, we observed a net decline in suitable habitats for investigated tree species, except *Shorea robusta*, with highest decline observed for *Quercus semecarpifolia* followed by *Taxus wallichiana*. The observed range dynamics and habitat suitability decline raise concerns for future ecosystem stability and biodiversity conservation in the region. Our study will contribute to the development of targeted management strategies to ensure the resilience of these dominant trees.
+Understanding species redistributions in response to climate change is crucial for prioritizing conservation efforts and developing effective biodiversity management plans. Since responses to climate change can be highly variable and species-specific, this study investigated the elevational range dynamics of ten dominant tree species in the Western Himalayas. Considering the lack of historical data, we used ensemble MaxEnt modeling to predict the habitat suitability for current (2010) and future climatic scenarios (2040, 2070, and 2100). Our results indicated range contractions for *Cedrus deodara*, *Pinus roxburghii*, *Quercus lanata*, *Quercus semecarpifolia*, and *Rhododendron arboreum*; and an upward shift in distribution of *Lyonia ovalifolia*, *Mallotus philippensis*, and *Quercus leucotrichophora*. The elevation range of *Shorea robusta* and *Taxus wallichiana* can lean towards higher and lower elevations, respectively. Further, we observed a net decline in suitable habitats for investigated tree species, except *Shorea robusta*, with the highest decline observed for *Quercus semecarpifolia* followed by *Taxus wallichiana*. The observed range dynamics and habitat suitability decline raise concerns for future ecosystem stability and biodiversity conservation in the region. Our study will contribute to developing targeted management strategies to ensure the resilience of these dominant trees.
 
-**Keywords:** climate change, dominant trees, elevational gradients, habitat suitability, MaxEnt modelling, range dynamics, species distribution, Western Himalayas
+**Keywords:** climate change, dominant trees, elevational gradients, habitat suitability, MaxEnt modeling, range dynamics, species distribution, Western Himalayas
 
 # Introduction
 
-Among the identified major threats to biodiversity [@Jaureguiberry2022; @WWF2020], climate change is emerging as a serious risk to biodiversity because it can drive irreversible decline in biodiversity at larger spatial scales [@WWF2020]. There is growing consensus that global warming is real and largely caused by human-mediated activities [@Cook2013; @IPCC2023]. The average surface temperature of earth has already rose 1.1&deg;C above the pre-industrial (1850-1900) levels during the 2011-2020 [@IPCC2023]. Consistent with global observations, the annual mean temperature over India increased with an average rate of 0.15&deg;C per decade during 1986–2015 [@Sanjay2020]. The Hindu Kush Himalayas (HKH) exhibited an average increase of 0.2&deg;C per decade in annual mean surface (air) temperature during 1951–2014 [@Sabin2020]. The rate of warming is positively associated with elevation and higher elevation regions such as Ladakh indicated an average increase of 0.5&deg;C per decade [@Wester2019]. If warming continued at this rate, the next century is projected to be even more hotter and the average earth surface will become 1.5&deg;C more hotter than pre-industrial levels on average during next century [@IPCC2023]. Since the climate has direct influence on distribution of living organisms [@Currie2004; @Francis2003], it is imperative to understand the biodiversity dynamics under future climatic scenarios to effectively manage biodiversity [@Bonebrake2018].
+Among the identified major threats to biodiversity [@Jaureguiberry2022; @WWF2020], climate change is emerging as a serious risk to biodiversity because it can drive an irreversible decline in biodiversity at larger spatial scales [@WWF2020]. There is a growing consensus that global warming is real and caused mainly by human-mediated activities [@IPCC2023]. The earth's average surface temperature has already risen 1.1&deg;C above the pre-industrial (1850--1900) levels from 2011 to 2020 [@IPCC2023]. Consistent with global observations, the annual mean temperature in India increased with an average rate of 0.15&deg;C per decade during 1986--2015 [@Krishnan2020]. The Hindu Kush Himalayas (HKH) exhibited an average increase of 0.2&deg;C per decade in annual mean surface (air) temperature from 1951 to 2014 [@Krishnan2020]. The rate of warming is positively associated with elevation, and higher elevation regions such as Ladakh indicate an average increase of 0.5&deg;C per decade [@Wester2019]. If warming continues at this rate, the next century is projected to be even hotter, and the earth's surface will become 1.5&deg;C more hotter than pre-industrial levels on average during the next century [@IPCC2023]. Since climate directly influences the distribution of living organisms [@Currie2004], it is imperative to understand the biodiversity dynamics under future climatic scenarios to manage biodiversity effectively [@Bonebrake2018].
 
-Available literature indicate that many taxonomic groups have shifted their distribution towards higher latitudes and elevations in response to climate warming [@Lenoir2015; @Parmesan2006; @Walther2001]. Some global syntheses suggest that species are shifting their distribution at an average rate of 6-17 km per decade northwards and 6-29 m per decade upwards across different taxa [@Chen2011; @Lenoir2008; @Parmesan2003]. However, different ecosystems and taxa showed high variation in the magnitude and direction of changes in species distribution [@Lenoir2015; @Lenoir2020]. The species range shifts were higher for taxa in marine ecosystems than the terrestrial ecosystems [@Lenoir2020]. Similarly, the short-lived and non-native taxa displayed higher shifts in distribution as compared to long-lived and native taxa among the terrestrial ecosystems [@Lenoir2015]. In mountain ecosystems, the species range shifts also varied with elevation apart from species identity [@Mamantov2021; @OSullivan2020; @Rumpf2018]. This variation in distributional shifts suggest that our understanding about climate-related species redistribution remained limited despite recent research efforts [@Lenoir2015]. While available studies provide evidence for shifting distributions, these range shifts are neither synchronous nor homogeneous across taxa [@Chen2011; @Lenoir2020]. Further, limited information is available about the distribution dynamics for many taxa across different geographical regions [@Lenoir2015]. Therefore, we need further investigations on climate-related distributional shifts for understudied taxa in under-represented geographical regions to effectively manage the biodiversity under ongoing environmental change.
+Available literature indicates that many taxonomic groups have shifted their distribution towards higher latitudes and elevations in response to climate warming [@Lenoir2015; @Parmesan2003]. Some global syntheses suggest that species are shifting their distribution at an average rate of 6--17 km per decade northwards and 6--29 m per decade upwards across different taxa [@Chen2011; @Lenoir2008; @Parmesan2003]. However, different ecosystems and taxa showed high variation in the magnitude and direction of changes in species distribution [@Lenoir2015; @Lenoir2020]. The species range shifts were higher for taxa in marine ecosystems than the terrestrial ecosystems [@Lenoir2020]. Similarly, the short-lived and non-native taxa displayed higher shifts in distribution than long-lived and native taxa among the terrestrial ecosystems [@Lenoir2015]. In mountain ecosystems, the species range shifts also vary with elevation apart from species identity [@Mamantov2021; @OSullivan2020; @Rumpf2018]. This variation in distributional shifts suggests that our understanding of climate-related species redistribution remained limited despite recent research efforts [@Lenoir2015]. While available studies provide evidence for shifting distributions, these range shifts are neither synchronous nor homogeneous across taxa [@Chen2011; @Lenoir2020]. Further, limited information is available about the distribution dynamics for many taxa across different geographical regions [@Lenoir2015]. Therefore, we need further investigations on climate-related distributional shifts for understudied taxa in under-represented geographical regions to effectively manage the biodiversity under ongoing environmental change.
 
-The geographic area occupied by all individuals of a species at a given time is referred as *distribution range* of a species [@Brown1996; @Lenoir2013]. Assuming a unimodal distribution of individuals within species' range (@fig-species-range), the area with maximum species abundance is referred as 'optimum range' whereas the peripheral area with minimum abundance is called 'range edge' or 'range margin' [@Brown1996; @Lenoir2013]. Along the single dimension of elevation, the range edge towards lower elevation limit can be referred as 'trailing edge' whereas that towards upper elevation limit can be called as 'leading edge' [@Lenoir2013]. The dynamics of species distribution is often quantified in terms of these three range parameters (trailing edge, range optimum, and leading edge) of species geographic range [@Kullman2002; @Rumpf2018; @Rumpf2019; @Wiens2016]. Based on the changes in range parameters, the species range can 'march', 'contract/expand', or 'lean' under future climate scenarios [@Breshears2008; @Lenoir2015]. In response to climate change, the trailing and leading edge move in same direction (marching or range shifting) or opposite direction (range contraction/expansion). Further, the 'range leaning' can emerge when either of the range edges (trailing or leading edge) or optimum range show considerable changes but at least one of these range parameters remain unchanged or show little changes. However, available literature indicates that high idiosyncrasies in climate-related changes in these range parameters [@Lenoir2013; @Lenoir2015]. Since these responses can be highly species-specific, we need to assess the range dynamics for different taxa and identify the most vulnerable species to set priorities for species conservation programmes. For example, some species like oaks may not be able to move upwards and survive due to climatic requirements of the phenology and seed formation [@Bisht2013]. Therefore, there is a clear need to investigate climate-induced range dynamics to conserve species that are facing threat of extinction from range shifting or range contractions.
+The geographic area occupied by all individuals of a species at a given time is referred to as the *distribution range* of a species [@Lenoir2013]. Assuming an unimodal distribution of individuals within the species' range (@fig-species-range), the area with maximum species abundance is referred to as the 'optimum range' whereas the peripheral area with minimum abundance is called 'range edge' or 'range margin' [@Lenoir2013]. Along the single dimension of elevation, the range edge towards the lower elevation limit can be referred to as the 'trailing edge' whereas that towards the upper elevation limit can be called the 'leading edge' [@Lenoir2013]. The species distribution dynamics are often quantified in terms of these three range parameters (trailing edge, optimum range, and leading edge) of species geographic range [@Rumpf2018; @Rumpf2019; @Wiens2016]. Based on the changes in range parameters, the species range can 'march', 'contract/expand', or 'lean' under future climate scenarios [@Breshears2008; @Lenoir2015]. In response to climate change, the trailing and leading edges can move in the same direction (marching or range shifting) or opposite direction (range contraction/expansion). Further, the 'range leaning' can emerge when either range edges (trailing or leading edge) or optimum range show considerable changes but at least one of these range parameters remains unchanged or show little changes. However, available literature indicates high idiosyncrasies in climate-related changes in these range parameters [@Lenoir2013; @Lenoir2015]. Since these responses can be highly species-specific, we need to assess the range dynamics for different taxa and identify the most vulnerable species to set priorities for species conservation programs. For example, some species, like oaks, may be unable to move upwards and survive due to the climatic requirements of the phenology and seed formation [@Bisht2013]. Therefore, there is a clear need to investigate climate-induced range dynamics to conserve species facing the threat of extinction from range shifting or range contractions.
 
 ```{r fig.width=7, fig.height=4}
 #| label: fig-species-range
-#| fig-cap: A hypothetical model for elevational species range showing the optimum range (grey coloured), trailing edge (brown coloured) and leading edge (blue coloured). Lighter colours represent the elevational zones with higher number of individuals.
+#| fig-cap: A hypothetical model for elevational species range showing the optimum range (grey colored), trailing edge (brown colored), and leading edge (blue colored). Lighter colors represent the elevational zones with a higher number of individuals.
 
 df_label <- data.frame(x = c(-2.7, 0, 2.7), 
                        y = c(0.05, 0.3, 0.05),
@@ -128,33 +148,33 @@ data.frame(x = seq(-3, 3, 0.01), y = dnorm(seq(-3, 3, 0.01))) |>
 # ggsave(filename = "figs/01-species_range.png", height = 4, width = 8, dpi = 600)
 ```
 
-Despite growing efforts to study the climate-related changes in species distributions, our understanding remained limited [@Bonebrake2018]. Studies investigating the species redistributions are poorly represented from the Asian countries like India [@Lenoir2015; @Rawat2010; @Walther2003]. The lack of information about geographical species distributions and historical records is a major challenge to investigate the species range shifts in response to climate change [@Barik2018; @Lenoir2015; @Rawat2010]. Thus, resurvey studies are not possible due to lack of historical data and many plants show lagged response or move slowly in response to climate warming. Considering these limitations, species distribution modelling emerge as a powerful technique to investigate the climate-driven shifting of plant distributions in under-studied regions like Indian Himalayas [@Guisan2017; @Maharjan2023; @Phillips2006]. Further, high idiosyncrasies in species responses indicate the need to consider multiple species while studying the species range shifts in response to climate change [@Lenoir2015]. Therefore, we aim to assess the impact of climate change on elevational distribution of dominant tree species in Western Himalayas. Specifically, we aim to (1) analyse the change in habitat suitability over space and time, (2) investigate the elevational range dynamics, (3) analyse the elevational change in species richness, and (4) assess the importance of environmental variables in predicting the habitat suitability. Considering the uncertain and variable effects of climate change on species distributions [@Bonebrake2018], our study will contribute to identify the tree species that are most vulnerable to climate change and understand the projected dynamics of elevational range for dominant tree species in Western Himalayas. Additionally, this study will improve our understanding about the specific environmental variables regulating the distribution dynamics of dominant trees in Western Himalayas.
+Despite growing efforts to study the climate-related changes in species distributions, our understanding remained limited [@Bonebrake2018]. Studies investigating species redistributions are poorly represented in Asian countries like India [@Lenoir2015; @Rawat2010]. The lack of information about geographical species distributions and historical records is a major challenge in investigating the species range shifts in response to climate change [@Lenoir2015; @Rawat2010]. Thus, resurvey studies are not possible due to a lack of historical data, and many plants show lagged responses or move slowly in response to climate warming. Considering these limitations, species distribution modeling emerges as a powerful technique to investigate the climate-driven shifting of plant distributions in under-studied regions like the Indian Himalayas [@Guisan2017; @Maharjan2023; @Phillips2006]. Further, high idiosyncrasies in species responses indicate the need to consider multiple species while studying the species range shifts in response to climate change [@Lenoir2015]. Therefore, we aim to assess the impact of climate change on the elevational distribution of dominant tree species in the Western Himalayas. Specifically, we aim to (1) analyze the change in habitat suitability over space and time, (2) investigate the elevational range dynamics, (3) analyze the elevational change in species richness, and (4) assess the importance of environmental variables in predicting habitat suitability. Considering the uncertain and variable effects of climate change on species distributions [@Bonebrake2018], our study will contribute to identifying the tree species that are most vulnerable to climate change and understanding the projected dynamics of elevational range for dominant tree species in the Western Himalayas. Additionally, this study will improve our understanding of the specific environmental variables regulating the distribution dynamics of dominant trees in the Western Himalayas.
 
 # Methodology
 
 ## Study area
 
-The Western Himalayas refer to the mountain range in the north-western India that stretches from the Indus river in west to Kali river in the east. Geographically, it spreads over the entire Jammu & Kashmir (union territory), Himachal Pradesh and Uttarakhand states of India. The elevation in Western Himalayas range from 300 metres to over 5,000 metres above mean sea level (@fig-site-map). The vegetation types range from mixed deciduous forests to alpine grasslands and support rich diversity of plants, animals and other living organisms. 
+The Western Himalayas refer to the mountain range in north-western India that stretches from the Indus River in the west to the Kali River in the east. Geographically, it spreads over the entire Jammu & Kashmir (union territory), Himachal Pradesh and Uttarakhand states of India. The elevation in the Western Himalayas ranges from 300 meters to over 5,000 meters above mean sea level (@fig-site-map). The vegetation types range from mixed deciduous forests to alpine grasslands and support a rich diversity of plants, animals, and other living organisms. 
 
 ```{r}
 # ## make site map
 # source("R/1-make_site_map.R")
 ```
 
-![Map showing the geographic locations of species occurrence in Western Himalaya spanning Himachal Pradesh and Uttarakhand states of India. The inset map shows the location of Western Himalayas in the Hindu Kush Himalaya.](figs/02-site_map.png){#fig-site-map}
+![Map showing the geographic locations of species occurrence in Western Himalaya spanning Himachal Pradesh and Uttarakhand states of India. The inset map shows the location of the Western Himalayas in the Hindu Kush Himalayas.](figs/02-site_map.png){#fig-site-map}
 
-The climate in Western Himalayas depicts substantial variation and varies from dry tropical to polar climates [@Beck2018]. The western part receives winter snow influenced by Mediterranean climates, whereas the eastern part receives summer rain influenced by Indian Monsoon. However, the Western Himalayas is experiencing notable changes in weather patterns and elevation dependent warming [@Sabin2020]. The Western Himalayas provides good opportunity to study elevational shifts in plant distributions due to its large elevational gradients, rich plant diversity and substantial changes in climatic environments.
+The climate in the Western Himalayas depicts substantial variation and varies from dry tropical to polar climates [@Beck2018]. The western part receives winter snow influenced by Mediterranean climates, whereas the eastern part receives summer rain influenced by the Indian Monsoon. However, the Western Himalayas are experiencing notable changes in weather patterns and elevation-dependent warming [@Krishnan2020]. The Western Himalayas provide a good opportunity to study elevational shifts in plant distributions due to its large elevational gradients, rich plant diversity, and substantial changes in climatic environments.
 
 ## Species occurrence
 
-In our previous study, we prepared a check list of plant species (n = 1385) reported from three protected areas in Western Himalayas [@Kumar2023a]. We retrieved the occurrence data for all species (n = 1012) that matched with taxonomic names in the Global Biodiversity Information Facility ([GBIF](https://www.gbif.org/)) database on 21 September 2023 [@GBIF2023]. These occurrence records were based on (1) preserved specimens, human observation, observation and machine observation; (2) found in India; (3) found within the bounding box of Western Himalayas; (4) has spatial coordinates; (5) has no GBIF geospatial issues; (6) occurrence status is presence only; and (7) observation is recorded in or after 1980 year. These species occurrences were downloaded using the `rgbif` package version `r packageVersion("rgbif")` [@R-rgbif] in `R` statistical environment version `r packageVersion("stats")` [@R-base]. Additionally, we compiled species occurrences from published literature (@tbl-occ-literature) and field survey using a GPS receiver (Garmin eTrex 10) from the Morni Hills, Chail WLS and Churdhar WLS in Western Himalayas.
+In our previous study, we prepared a checklist of plant species (n = 1385) reported from three protected areas in the Western Himalayas [@Kumar2023a]. We retrieved the occurrence data for all species (n = 1012) that matched with taxonomic names in the Global Biodiversity Information Facility ([GBIF](https://www.gbif.org/)) database on 21 September 2023 [@GBIF2023]. These occurrence records were based on (1) preserved specimens, human observation, observation, and machine observation; (2) found in India; (3) found within the bounding box of the Western Himalayas; (4) spatial coordinates; (5) has no GBIF geospatial issues; (6) occurrence status is presence only; and (7) observation is recorded in or after the 1980 year. These species occurrences were downloaded using the `rgbif` package version `r packageVersion("rgbif")` [@R-rgbif] in `R` statistical environment version `r packageVersion("stats")` [@R-base]. Additionally, we compiled species occurrences from published literature (Appendix S1: Table S1), and field surveys using a GPS receiver (Garmin eTrex 10) from the Morni Hills, Chail WLS, and Churdhar WLS in the Western Himalayas.
 
 ```{r}
 # ## get GBIF species occurrences
 # source("R/2-get_gbif_occ.R")
 ```
 
-To investigate the climate-driven elevational range shifts, we initially selected 15 tree species that (1) dominate the local forest type [@Champion1968] or ecologically important; (2) had spatially balanced distribution across the Western Himalayas; (3) had sufficient number (n > 40) of raw occurrence distribution; (4) are not under cultivation or domestication, and (5) are relatively less affected by land-use change and human activities. Similar criteria have been previously used to select the plant species for investigating the shifting plant distributions [@Liang2018]. We compiled a database of geographical occurrences for selected species by combining data from the [GBIF](https://www.gbif.org/), published literature (@tbl-occ-literature) and field survey. Next, we screened each recorded geographic occurrence for their quality and plausibility (@fig-occ-cleaning). Specifically, we retained only those occurrence records that (1) were inside our study area, (2) correspond to a tree cover of more than 50% at ~30 arc-sec resolution [@Zanaga2021], and (3) were within the observed elevational range of the species. The filtering of records based on tree cover allowed us to minimise the effects of land use and human activities. Further, we randomly selected only one record within the defined cell size of 0.2 degree (~22.22 km) to minimise sampling bias and spatial dependence. Finally, we selected species (n = 10) with at least 20 cleaned species occurrences (@tbl-selected-species).
+To investigate the climate-driven elevational range shifts, we initially selected 15 tree species that (1) dominate the local forest type [@Champion1968] or ecologically important; (2) had spatially balanced distribution across the Western Himalayas; (3) had sufficient number (n > 40) of raw occurrence distribution; (4) are not under cultivation or domestication, and (5) are relatively less affected by land-use change and human activities. Similar criteria have been previously used to select the plant species to investigate the shifting plant distributions [@Liang2018]. We compiled a database of geographical occurrences for selected species by combining data from the [GBIF](https://www.gbif.org/), published literature (Appendix S1: Table S1) and field survey. Next, we screened each recorded geographic occurrence for its quality and plausibility (Appendix S1: Figure S1). Specifically, we retained only those occurrence records that (1) were inside our study area, (2) corresponded to a tree cover of more than 50% at ~30 arc-sec resolution [@Zanaga2021], and (3) were within the observed elevational range of the species. Filtering records based on tree cover allowed us to minimize the effects of land use and human activities. Further, we randomly selected only one record within the defined cell size of 0.2 degrees (~22.22 km) to minimize sampling bias and spatial dependence. Finally, we selected species (n = 10) with at least 20 cleaned species occurrences (@tbl-selected-species).
 
 ```{r}
 # ## clean species occurrences
@@ -163,7 +183,7 @@ To investigate the climate-driven elevational range shifts, we initially selecte
 
 ```{r}
 #| label: tbl-selected-species
-#| tbl-cap: Summary of cleaned geographical occurrences (n) used for modelling tree species distributions in Western Himalayas. The observed lower elevational limit (LL) and upper elevational limit (UL) used for cleaning are also presented. The elevational limits are represented in metres unit.
+#| tbl-cap: Summary of cleaned geographical occurrences (n) used for modeling tree species distributions in the Western Himalayas. The observed lower elevational limit (LL) and upper elevational limit (UL) used for cleaning are also presented. The elevational limits are represented in metre units.
 
 selected_species <- read.csv("data/selected_species.csv")
 
@@ -180,9 +200,9 @@ read.csv("output/cleaned_occ.csv") |>
 
 ## Environmental variables
 
-We were unaware of specific environmental variables that determine the distribution of selected species. Therefore, we used a set of 19 bioclimatic variables that have been frequently included to model the species distribution [@Bobrowski2021; @Guisan2017]. These variables have been supposed to be more biologically meaningful than the monthly climate variables. We downloaded these climatic variables at 30-arc-sec (~1 km) resolution for 1981--2010 (hereafter 'current') from the CHELSA (<https://chelsa-climate.org/>) database version 2.1 [@Karger2017]. This database has been considered appropriate for ecological modelling in complex ecosystems like the Himalayas [@Bobrowski2021; @Bobrowski2017; @Rana2019ecs]. We did not included elevation, slope and aspect because we infer them to be only indirectly related to the distribution and physiology [@Korner2007]. Additionally, our previous study indicated that topographic heterogeneity is less important than the climate [@Kumar2023b]. Further, topographic variables like elevation, slope and aspect have been suggested to be poor predictors of species distributions as compared to climatic variables like temperature and precipitation [@Bradie2017].
+We were unaware of specific environmental variables that determine the distribution of selected species. Therefore, we used a set of 19 bioclimatic variables that have been frequently included to model the species distribution [@Bobrowski2021; @Guisan2017]. These variables have been supposed to be more biologically meaningful than the monthly climate variables. We downloaded these climatic variables at 30-arc-sec (~1 km) resolution for 1981--2010 (hereafter 'current') from the CHELSA (<https://chelsa-climate.org/>) database version 2.1 [@Karger2017]. This database has been considered appropriate for ecological modeling in complex ecosystems like the Himalayas [@Bobrowski2021]. We did not include elevation, slope, and aspect because we infer they are only indirectly related to species' distribution and physiology [@Korner2007]. Additionally, our previous study indicated that topographic heterogeneity is less important than the climate [@Kumar2023b]. Further, topographic variables like elevation, slope, and aspect have been suggested to be poor predictors of species distributions as compared to climatic variables like temperature and precipitation [@Bradie2017].
 
-Next, we calculated variance inflation factor (VIF) for all the 19 bioclimatic variables using the `vifstep()` function from the `usdm` package version `r packageVersion("usdm")` [@R-usdm]. Variables with a VIF greater than 10 were considered correlated [@Guisan2017] and excluded from further analysis to minimise the bias due to multicollinearity among predictors [@Dormann2013]. This VIF-based variable selection identified six bioclimatic variables: mean diurnal air temperature range (bio2), isothermality (bio3), mean daily mean air temperatures of the wettest quarter (bio8), precipitation amount of the driest month (bio14), precipitation seasonality (bio15) and mean monthly precipitation amount of the warmest quarter (bio18). These bioclimatic variables showed substantial variation over the study region (@fig-bio-current).
+Next, we calculated the variance inflation factor (VIF) for all the 19 bioclimatic variables using the `vifstep()` function from the `usdm` package version `r packageVersion("usdm")` [@R-usdm]. Variables with a VIF greater than ten were considered correlated [@Guisan2017] and excluded from further analysis to minimize the bias due to multicollinearity among predictors [@Dormann2013]. This VIF-based variable selection identified six bioclimatic variables: mean diurnal air temperature range (bio2), isothermality (bio3), mean daily mean air temperatures of the wettest quarter (bio8), precipitation amount of the driest month (bio14), precipitation seasonality (bio15) and mean monthly precipitation amount of the warmest quarter (bio18). These bioclimatic variables showed substantial variation over the study region (Appendix S1: Figure S3).
 
 ```{r fig.height=8, fig.width=8}
 # ## variance inflation factor (VIF)
@@ -195,32 +215,32 @@ Next, we calculated variance inflation factor (VIF) for all the 19 bioclimatic v
 #   terra::pairs(maxcells = 1e3)
 ```
 
-The sixth phase of the Coupled Model Intercomparison Project [CMIP6, @Eyring2016] uses five future scenarios with expected socioeconomic changes up to 2100, which are referred as the Shared Socioeconomic Pathways [SSPs, @ONeill2014]. These pathways are used to generate scenarios for greenhouse gas (GHG) emissions under various climate policies [@IPCC2023]. Among these five scenarios, the SSP5–8.5 and SSP3–7.0 scenarios were considered unlikely [@Hausfather2020]. The SSP1-2.6 expects a global warming of 1.8&deg;C during 2081-2100 under a low GHG emissions scenario with CO~2~ emissions cut to net zero around 2075. To project the species distribution under future climatic conditions, we used the likely climatic conditions under SSP1-2.6 scenario from the GFDL-ESM4 model [@Zhao2018]. We downloaded the selected five bioclimatic variables for 2011-2040 (hereafter 2040), 2041-2070 (hereafter 2070) and 2071-2100 (hereafter 2100) under SSP1-2.6 from CHELSA database version 2.1 [@Karger2017]. 
+The sixth phase of the Coupled Model Intercomparison Project [CMIP6, @Eyring2016] uses five future scenarios with expected socioeconomic changes up to 2100, which are referred to as the Shared Socioeconomic Pathways [SSPs, @ONeill2014]. These pathways are used to generate scenarios for greenhouse gas (GHG) emissions under various climate policies [@IPCC2023]. Among these five scenarios, the SSP5--8.5 and SSP3--7.0 scenarios were considered unlikely [@Hausfather2020]. The SSP1--2.6 expects global warming of 1.8&deg;C during 2081--2100 under a low GHG emissions scenario with CO~2~ emissions cut to net zero around 2075. To project the species distribution under future climatic conditions, we used the likely climatic conditions under the SSP1--2.6 scenarios from the GFDL-ESM4 model [@Zhao2018]. We downloaded the selected five bioclimatic variables for 2011--2040 (hereafter 2040), 2041--2070 (hereafter 2070), and 2071--2100 (hereafter 2100) under SSP1--2.6 from CHELSA database version 2.1 [@Karger2017]. 
 
-## Distribution modelling
+## Distribution modeling
 
-Our dataset consisted of locations for species presence and lacked information about species absence (presence-only data). The MaxEnt is considered as one of the most popular [@Hao2019] and best performing algorithm such data lacking information about true species absences [@Valavi2022]. This algorithm is considered to cope well with small number of species presence records and computationally fast [@Maharjan2022; @Thibaud2014; @Valavi2022]. It finds the solution by minimising the relative entropy between the probability densities of presence (*f~1~*) and background points (*f*) defined in environmental (covariate) space [@Elith2011]. Thus, it contrasts the observed presence points to the available environment in a given region (background). The background points are locations in the study area (including both presence and absence) that represent the full available environmental space [@Merow2013]. 
+Our dataset consisted of locations for species presence and lacked information about species absence (presence-only data). The MaxEnt is considered one of the most popular [@Hao2019] and best-performing algorithms for such data lacking information about true species absences [@Valavi2022]. This algorithm is considered to cope well with a small number of species presence records and is computationally fast [@Gogol-Prokurat2011; @Thibaud2014; @Valavi2022]. It finds the solution by minimizing the relative entropy between the probability densities of presence (*f~1~*) and background points (*f*) defined in environmental (covariate) space [@Elith2011]. Thus, it contrasts the observed presence points to the available environment in a region (background). The background points are locations in the study area (including both presence and absence) representing the entire available environmental space [@Merow2013]. 
 
-MaxEnt needs sufficiently large number of background points to represent the full gradient of environment space for optimal performances [@Elith2011; @Merow2013]. To determine the number of background points and sampling method, the performance of MaxEnt models was compared using the 250, 500, 1000, 2000, and 5000 background points generated by disk (1 km to 50 km) and random sampling for *Mallotus philippensis* as a test case (@fig-mp-bg-opt). It was revealed that the model performance was better for more than 1,000 randomly sampled background points. Therefore, this study used 1,000 randomly sampled locations from the full extent of the study area as background points (@fig-mp-bg-opt). The random sampling is commonly used to select pseudo-absence or background points [@Hao2019], though it is ecologically unrealistic and may introduce sampling bias. Since MaxEnt models the density of used environmental conditions rather than species presence [@Elith2011], the random sampling of background points would have little effects on model performance [@Phillips2008]. Since random sampling is a stochastic procedure, we generated three sets (PA1, PA2 and PA3) of 1,000 randomly background points to minimise the sampling bias [@Barbet-Massin2012; @Guisan2017; @Valavi2022].
+MaxEnt needs a sufficiently large number of background points to represent the full gradient of environment space for optimal performances [@Elith2011; @Merow2013; @Phillips2009]. To determine the number of background points and sampling method, the performance of MaxEnt models was compared using the 250, 500, 1000, 2000, and 5000 background points generated by disk (1 km to 50 km) and random sampling for *Mallotus philippensis* as a test case (Appendix S1: Figure S4). It was revealed that the model performance was better for more than 1,000 randomly sampled background points. Therefore, this study used 1,000 randomly sampled locations from the full extent of the study area as background points. Random sampling is commonly used to select pseudo-absence or background points [@Hao2019], though it is ecologically unrealistic and may introduce sampling bias. Since MaxEnt models the density of used environmental conditions rather than species presence [@Elith2011], the random sampling of background points would have little effect on model performance [@Phillips2008]. Since random sampling is a stochastic procedure, we generated three sets (PA1, PA2, and PA3) of 1,000 random background points to minimize the sampling bias [@Guisan2017; @Valavi2022].
 
 ```{r}
 ## run initial analysis to decide background points
 # source("R/4-decide_background.R")
 ```
 
-Although MaxEnt models with default settings (un-tuned) may lead to suboptimal model performances [@Merow2013; @Morales2017], these un-tuned models are frequently used to model species distributions [@Hao2019]. The default settings of MaxEnt were chosen based on the model performance for different taxonomic groups [@Phillips2008]. MaxEnt uses six model parameters (features): linear, product, quadratic, hinge, threshold, and categorical features to optimise the models [@Elith2011]. All six features will be used if the number of presences are greater than 80 under the default settings [@Merow2013; @Phillips2008]. Further, MaxEnt uses regularisation to avoid over-tuning while fitting a fairly complex response variable. Thus, it fits a penalised maximum likelihood model that aims to trade-off model fit and model complexity [@Phillips2008]. We used the un-tuned MaxEnt models because we aimed to model multiple species simultaneously and its impractical to build species-species tuned models [@Merow2013]. Since the raw output of MaxEnt represents the relative suitability of environment (*f~1~/f*), it is back-transformed into logistic outputs [@Elith2011; @Phillips2006]. The MaxEnt models were implemented in the `R` statistical environment using the `biomod2` package version `r packageVersion("biomod2")` [@R-biomod2; @Thuiller2009] together with the standalone java-based MaxEnt software version 3.4.3 [@Phillips2006]. 
+Although MaxEnt models with default settings (un-tuned) may lead to suboptimal model performances [@Merow2013; @Warren2011], these un-tuned models are frequently used to model species distributions [@Hao2019]. The default settings of MaxEnt were chosen based on the model performance for different taxonomic groups [@Phillips2008]. MaxEnt uses six model parameters (features): linear, product, quadratic, hinge, threshold, and categorical features to optimize the models [@Elith2011]. All six features will be used if the number of presences is greater than 80 under the default settings [@Merow2013; @Phillips2008]. Further, MaxEnt uses regularization to avoid over-tuning while fitting a fairly complex response variable. Thus, it fits a penalized maximum likelihood model that aims to trade off model fit and model complexity [@Phillips2008]. We used the un-tuned MaxEnt models because we aimed to model multiple species simultaneously, and it is impractical to build species-specific tuned models [@Merow2013]. Since the raw output of MaxEnt represents the relative suitability of the environment (*f~1~/f*), it is back-transformed into logistic outputs [@Elith2011; @Phillips2006]. The MaxEnt models were implemented in the `R` statistical environment using the `biomod2` package version `r packageVersion("biomod2")` [@R-biomod2; @Thuiller2009] together with the standalone java-based MaxEnt software version 3.4.3 [@Phillips2006]. 
 
 ## Model evaluation
 
-We followed the frequently used split-sample cross-validation approach to evaluate the model performance because independent external dataset was not available [@Hao2019]. This approach consist of randomly splitting the initial dataset into two subsets, i.e., one for training the model and other for testing the model. We calibrated our models with 70% of the data (training set) and evaluated on the remaining 30% (validation set). This procedure was repeated for four times (RUN1, RUN2, RUN3, and RUN4) to minimise the bias due to random splitting of the initial dataset. Thus, we build 12 individual models (3 pseudo-absence sets &times; 4 cross-validation runs) for each species. 
+We followed the frequently used split-sample cross-validation approach to evaluate the model performance because an independent external dataset was not available [@Hao2019]. This approach randomly splits the initial dataset into two subsets, i.e., one for training the model and the other for testing the model. We calibrated our models with 70% of the data (training set) and evaluated with the remaining 30% (validation set). This procedure was repeated four times (RUN1, RUN2, RUN3, and RUN4) to minimize the bias due to random splitting of the initial dataset. Thus, we build 12 individual models (3 pseudo-absence sets &times; 4 cross-validation runs) for each species. 
 
-The predictive accuracy of models was evaluated using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (AUC~ROC~) [@Guisan2017]. Both these metrics measure the model's discrimination ability to distinguish between species presence and absence (in our case suitable and unsuitable). The probabilities of species presence are first converted into binary observations of species presence and absence using a threshold value. An incorrectly predicted absence (false absence) is known as *omission* error, whereas incorrectly predicted presence (false presence) is known as *commission* error. The percentage of correctly predicted presences (true presence) is known as *sensitivity*, whereas the percentage of correctly predicted absences (true absence) is known as *specificity*. The TSS is defined as the sum of sensitivity and specificity minus one. Thus, TSS is a threshold-dependent metric because its value depend on the choice of threshold value. The threshold value which maximises the TSS is considered optimum threshold to convert probabilities into binary species presence and absence [@Liu2013]. Therefore, models with higher predictive accuracy will have values close to one and TSS scores greater than 0.7 are considered as useful to excellent [@Allouche2006]. 
+The predictive accuracy of models was evaluated using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (AUC~ROC~) [@Guisan2017]. Both these metrics measure the model's discrimination ability to distinguish between species presence and absence (in our case, suitable and unsuitable). The probabilities of species presence are first converted into binary observations of species presence and absence using a threshold value. An incorrectly predicted absence (false absence) is known as an *omission* error, whereas an incorrectly predicted presence (false presence) is known as a *commission* error. The percentage of correctly predicted presences (true presence) is known as *sensitivity*, whereas the percentage of correctly predicted absences (true absence) is known as *specificity*. The TSS is defined as the sum of sensitivity and specificity minus one. Thus, TSS is a threshold-dependent metric because its value depends on the threshold value choice. The threshold value maximizing the TSS was considered the optimum threshold for converting probabilities into binary species presence and absence [@Liu2013]. Therefore, models with higher predictive accuracy will have values close to one, and TSS scores greater than 0.7 are considered useful to excellent [@Allouche2006]. 
 
-On the other hand, the AUC~ROC~ is a threshold-independent discrimination metric because it integrates all evaluation values at all thresholds into a single final metric using the graphical approach. The ROC curve is constructed by plotting the sensitivity (percentage of correctly predicted presences) against the commission error rates (percentage of wrongly predicted absences) and then the area under this curve is calculated as the final metric. The AUC~ROC~ values greater than 0.7 are usually considered as fair to excellent [@Araujo2005]. However, the AUC~ROC~ is sensitive to prevalence whereas the TSS is not affected by prevalence [@Allouche2006].
+On the other hand, the AUC~ROC~ is a threshold-independent discrimination metric because it integrates all evaluation values at all thresholds into a single final metric using the graphical approach. The ROC curve is constructed by plotting the sensitivity (percentage of correctly predicted presences) against the commission error rates (percentage of wrongly predicted absences), and then the area under this curve is calculated as the final metric. The AUC~ROC~ values greater than 0.7 are considered fair to excellent [@Araujo2005]. However, the AUC~ROC~ is sensitive to prevalence, whereas the TSS is unaffected by prevalence [@Allouche2006].
 
-## Ensemble modelling
+## Ensemble modeling
 
-Ensemble models can improve transferability across space and time by accommodating variability among individual models [@Araujo2007; @Hao2020]. Therefore, we build ensemble models for each species to summarise the performances of their 12 individual models. We used two popular methods for building ensemble models: committee averaging (EMca) and weighted mean (EMwmean) [@Hao2019]. The EMca approach first transforms the probabilities from selected models into the binary species presence (1) and absence (0) based on a threshold defined by maximising the evaluation metric score on a testing dataset. Then, it takes the average of binary predictions from all selected models. Thus, the committee averaging score of 0 or 1 means all models agree, whereas any values between 0 and 1 indicate at least one model disagree with predictions. On the other hand, the EMwmeans approach weights the probabilities from each model based on the evaluation score and then sum all the probabilities. The individual model with better performance receives higher weight and therefore, have higher importance in the ensemble. Since the performance of ensemble model depends on the quality of individual models, we used a threshold TSS score of 0.7 to remove low quality models (TSS < 0.7), perform binary transformation for EMca (presence = TSS > 0.7 and absence = TSS < 0.7) and define model weights for EMwmean [@Nikkel2023]. The performance of ensemble models were also evaluated using the same evaluation metrics (TSS and AUC~ROC~) as used for individual models. To ensure the reproducibility and transparency, we adopted the standard ODMAP protocol [@Zurell2020] to report the details of modelling workflow used in this study (@sec-odmap-protocol).
+Ensemble models can improve transferability across space and time by accommodating variability among individual models [@Hao2020]. Therefore, we build ensemble models for each species to summarise the performances of their 12 individual models. We used two popular methods for building ensemble models: committee averaging (EMca) and weighted mean (EMwmean) [@Hao2019]. The EMca approach first transforms the probabilities from selected models into the binary species presence (1) and absence (0) based on a threshold defined by maximizing the evaluation metric score on a testing dataset. Then, it takes the average of binary predictions from all selected models. Thus, the committee averaging score of 0 or 1 means all models agree, whereas any values between 0 and 1 indicate at least one model disagrees with predictions. On the other hand, the EMwmeans approach weights the probabilities from each model based on the evaluation score and then sums all the probabilities. The individual model with better performance receives higher weight and, therefore, has higher importance in the ensemble. Since the performance of the ensemble model depends on the quality of individual models, we used a threshold TSS score of 0.7 to remove low-quality models (TSS < 0.7), perform binary transformation for EMca (presence = TSS > 0.7 and absence = TSS < 0.7) and define model weights for EMwmean [@Nikkel2023]. The performance of ensemble models was also evaluated using the same evaluation metrics (TSS and AUC~ROC~) as used for individual models. To ensure reproducibility and transparency, we adopted the standard ODMAP protocol [@Zurell2020] to report the details of the modeling workflow used in this study (Appendix S1: Section S3).
 
 ```{r}
 ## model habitat suitability for each species (may take 5-6 hours)
@@ -230,31 +250,35 @@ Ensemble models can improve transferability across space and time by accommodati
 
 ## Data analysis
 
-This study aimed to analyse the predicted changes in habitat suitability over space and time for dominant trees of Western Himalayas. We used the best ensemble model (out of EMca and EMwmean) to project the model predictions to near current environmental conditions (2010) and future environmental conditions for 2040, 2070 and 2100 under the SSP1--2.6 scenario. The predicted habitat suitability (scaled to 0--1000 in output) was converted into binary map projections using the threshold that maximises TSS evaluation scores [@Liu2013; @Thuiller2019]. Then, we estimated the species range change by calculating the number of pixels gaining or losing the habitat suitability under future climatic conditions as compared to current climatic conditions. The species range change was computed using the `BIOMOD_RangeSize()` function from the `biomod2` package [@R-biomod2]. 
+This study aimed to analyze the predicted changes in habitat suitability over space and time for dominant trees of the Western Himalayas. We used the best ensemble model (out of EMca and EMwmean) to project the model predictions to near-current environmental conditions (2010) and future environmental conditions for 2040, 2070, and 2100 under the SSP1--2.6 scenario. The predicted habitat suitability (scaled to 0--1000 in output) was converted into binary map projections using the threshold that maximizes TSS evaluation scores [@Liu2013; @Thuiller2019]. Then, we estimated the species range change by calculating the number of pixels gaining or losing habitat suitability under future climatic conditions compared to current ones. The species range change was computed using the `BIOMOD_RangeSize()` function from the `biomod2` package [@R-biomod2]. 
 
-Another aim of this study was to assess the assemblage level change in habitat suitability under future climatic scenarios. We calculated the predicted species richness for each climatic scenario (represented by years) by stacking the binary map projections for each individual species (n = 10). To evaluate the predicted changes in species richness, we subtracted the predicted species richness for current climates (2010) from the predicted species richness for different climatic scenarios (2040, 2070, and 2100). Then, we calculated the percentage of pixels predicted to undergo changes in species richness for future climatic conditions. Further, we extracted the elevation for each pixel, representing the change in species richness, using the `extract()` function from the `terra` package version `r packageVersion("terra")` [@R-terra]. Then, we used the boxplot to explore the relationship between elevation and change in species richness.
+Another aim of this study was to assess the assemblage level change in habitat suitability under future climatic scenarios. We calculated the predicted species richness for each climatic scenario (represented by years) by stacking the binary map projections for each species (n = 10). To evaluate the predicted changes in species richness, we subtracted the predicted species richness for current climates (2010) from the predicted species richness for different climatic scenarios (2040, 2070, and 2100). Then, we calculated the percentage of pixels predicted to undergo changes in species richness for future climatic conditions. Further, we extracted the elevation for each pixel, representing the change in species richness, using the `extract()` function from the `terra` package version `r packageVersion("terra")` [@R-terra]. Then, we used the boxplot to explore the relationship between elevation and change in species richness.
 
 ```{r}
 ## get assemblage level suitability
 # source("R/6-get_spec_rich.R")
 ```
 
-Our primary aim was to investigate the potential elevational shifts in plant distributions due to projected climate change. We extracted the elevation values for each pixel where our ensemble model predicted suitable habitat for species presence. Then, we plotted the pixel density against the elevation for each species under current and future climatic conditions to visually assess the predicted shifts in elevational ranges. To estimate the pixel density, we used the Silverman's rule-of-thumb for choosing the bandwidth of a Gaussian kernel density estimator [@Silverman1986]. Further, we used three parameters of species' elevational range: trailing edge, range optimum and leading edge to analyse species range dynamics [@Lenoir2015]. The optimum elevation was defined as the 100-m elevational band with maximum number of pixels where the model predicted species presence. Using a conservative approach, we defined the trailing edge (lower limit) and leading edge (upper limit) as the 5th and 95th percentile of elevations of all predicted suitable pixels [@Maharjan2023]. To test the effect of climatic scenarios (current, 2040, 2070 and 2100) on elevational range parameters, we used type-II analysis of variance (ANOVA) because the data for range parameters was unbalanced. Since the number of pixels with suitable habitat can vary with climatic conditions, we computed the least-square means or the estimated marginal means (EMMs) of the range parameters using the general linear model. Then, these EMMs were compared for current and future climatic conditions in a pairwise fashion with Tukey's  adjustment for multiple comparisons (equivalent to Tukey's test). The pairwise comparison was implemented using the `emmean` package version `r packageVersion("emmeans")` [@R-emmeans]. Further, we regressed the EMMs of range parameters against the year of climatic conditions (2010, 2040, 2070 and 2100) and estimated the slope values using a general linear model. These estimated slope values were compared to analyse the potential range dynamics of species elevation ranges under projected climate change scenarios.
+Our primary aim was to investigate the potential elevational shifts in plant distributions due to projected climate change. We extracted the elevation values for each pixel where our ensemble model predicted a suitable habitat for species presence. Then, we plotted the pixel density against the elevation for each species under current and future climatic conditions to assess the predicted shifts in elevational ranges visually. To estimate the pixel density, we used Silverman's rule-of-thumb to choose the bandwidth of a Gaussian kernel density estimator [@Silverman1986]. Further, we used three parameters of the species' elevational range (trailing edge, range optimum, and leading edge) to analyze species' range dynamics [@Lenoir2015]. The optimum elevation was defined as the 100-m elevational band with the maximum number of pixels where the model predicted species presence. Using a conservative approach, we defined the trailing edge (lower limit) and leading edge (upper limit) as the 5th and 95th percentile of elevations of all predicted suitable pixels [@Maharjan2023]. 
+
+To test the effect of climatic scenarios (current, 2040, 2070 and 2100) on elevational range parameters, we used type-II analysis of variance (ANOVA) because the data for range parameters was unbalanced. Since the number of pixels with suitable habitat can vary with climatic conditions, we computed the least-square means or the estimated marginal means (EMMs) of the range parameters using the general linear model. Then, these EMMs were compared for current and future climatic conditions in a pairwise fashion with Tukey's  adjustment for multiple comparisons (equivalent to Tukey's test). The pairwise comparison was implemented using the `emmean` package version `r packageVersion("emmeans")` [@R-emmeans]. Further, we regressed the EMMs of range parameters against the year of climatic conditions (2010, 2040, 2070, and 2100) and estimated the slope values using a general linear model. These estimated slope values were compared to analyze the potential range dynamics of species elevation ranges under projected climate change scenarios.
 
 ```{r}
 ## model habitat suitability for each species
 # source("R/7-get_suit_elev.R")
 ```
 
-One of the objective of this study was to investigate the how different environmental variables influence the species presence. To estimate the importance of environmental variables, each environmental variable was shuffled and and model predictions were computed using the shuffled variable. The Pearson's correlation coefficient (*r*) was calculated between the reference predictions and the predictions from shuffled variable. The final variable importance score is calculated by subtracting the Pearson's correlation from one (1 -- *r*). A high correlation between reference and shuffled predictions will indicate little or no influence on the model and therefore, the variable importance score will have a lower value. A value of zero assumes no influence of the variable on the model. On the other hand, higher scores will indicate low correlation between reference and shuffled predictions and therefore, higher will be the importance of the variable. Since variable shuffling is stochastic procedure, we used three permutations (n = 3) for each environmental variable to estimate its variable importance score [@R-biomod2; @Thuiller2009]. Further, we used the evaluation strip procedure to analyse how each environmental variable influences the probability of species' presence or habitat suitability [@Elith2005]. A plot of the predicted response variable (probability of presence) on y-axis and one or more predictor variables on x-axis is usually called as the response curve. We build these plots by generating predictions from each model on a dataset where only one variable is allowed to vary and all others (n - 1) were kept constant to their mean. The response curves from evaluated all models (12 individual models and 2 ensemble models) were summarised using the generalised additive model (GAM) with a shrinkage version of penalised cubic spline defined by a modest sized set of knots spread evenly through the covariate values. The smoothing parameter was estimated restricted maximum likelihood (REML) method. All statistical analyses were implemented in `R` statistical environment version `r packageVersion("stats")` [@R-base] and package `tidyverse` version `r packageVersion("tidyverse")` was used for general data wrangling and visualisation [@R-tidyverse]. Further details on specific computational platform and other `R` packages used in this study is provided as Session Info (@sec-session-info).
+One of the objectives of this study was to investigate how different environmental variables influence the presence of species. To estimate the importance of environmental variables, each environmental variable was shuffled, and model predictions were computed using the shuffled variable. Pearson's correlation coefficient (*r*) was calculated between the reference and shuffled variable predictions. The final variable importance score is calculated by subtracting Pearson's correlation from one (1 -- *r*). A high correlation between reference and shuffled predictions will indicate little or no influence on the model, and therefore, the variable importance score will have a lower value. A zero value assumes that the variable does not influence the model. On the other hand, higher scores will indicate a low correlation between reference and shuffled predictions; therefore, the higher the importance of the variable. Since variable shuffling is a stochastic procedure, we used three permutations (n = 3) for each environmental variable to estimate its importance score [@R-biomod2; @Thuiller2009]. 
+
+Further, we used the evaluation strip procedure to analyze how each environmental variable influences the probability of species' presence or habitat suitability [@Elith2005]. A plot of the predicted response variable (probability of presence) on the y-axis and one or more predictor variables on the x-axis is usually called the *response curve*. We build these plots by generating predictions from each model on a dataset where only one variable can vary, and all others (n -- 1) were kept constant to their mean. The response curves from evaluated all models (12 individual and two ensemble models) were summarized using the generalized additive model (GAM) with a shrinkage version of penalized cubic spline defined by a modest-sized set of knots spread evenly through the covariate values. The smoothing parameter was estimated restricted maximum likelihood (REML) method. All statistical analyses were implemented in `R` statistical environment version `r packageVersion("stats")` [@R-base], and package `tidyverse` version `r packageVersion("tidyverse")` was used for general data wrangling and visualization [@R-tidyverse]. Further details on specific computational platforms and other `R` packages used in this study are provided as Session Info (Appendix S1: Section S4).
 
 # Results
 
-Our initial dataset comprised of total 1876 geographic occurrences in Western Himalayas for 15 chosen species from GBIF (n = 412), published literature (n = 1325) and field survey (n = 139). The cleaning of species occurrences revealed that out of initial 1876 occurrences, 114 were outside our study area, 305 were outside forests (<50% tree cover), 233 were outside the known species' elevational range and 845 were duplicated within 0.2-degree cells (@fig-occ-cleaning). After cleaning and preprocessing the occurrences, our final dataset comprised of total 308 cleaned occurrences for 10 tree species with at least 20 occurrences within our study area (@fig-species-occurrence).
+Our initial dataset comprised a total of 1876 geographic occurrences in the Western Himalayas for 15 chosen species from GBIF (n = 412), published literature (n = 1325), and field surveys (n = 139). The cleaning of species occurrences revealed that out of the initial 1876 occurrences, 114 were outside our study area, 305 were outside forests (<50% tree cover), 233 were outside the known species' elevational range, and 845 were duplicated within 0.2-degree cells (Appendix S1: Figure S1). After cleaning and preprocessing the occurrences, our final dataset comprised 308 cleaned occurrences for ten tree species with at least 20 occurrences within our study area (Appendix S1: Figure S2).
 
 ```{r fig.width=7, fig.height=6}
 #| label: fig-eval-score
-#| fig-cap: (a) Comparison of model evaluation scores (AUC~ROC~ and TSS) for the Calibration and Validation dataset. The values represent the mean &pm; SD of individual models (n &equals; 12) for each selected tree species. (b) Comparison of model evaluation scores (AUC~ROC~ and TSS) for the committee averaging (EMca) and weighted mean averaging (EMwmean) algorithm for ensemble modelling. Individual models with a TSS value greater than 0.7 were included in the ensemble.
+#| fig-cap: (a) Comparison of model evaluation scores (AUC~ROC~ and TSS) for the Calibration and Validation dataset. The values represent the mean &pm; SD of individual models (n &equals; 12) for each selected tree species. (b) Comparison of model evaluation scores (AUC~ROC~ and TSS) for the committee averaging (EMca) and weighted mean averaging (EMwmean) algorithm for ensemble modeling. Individual models with a TSS value greater than 0.7 were included in the ensemble.
 
 ## evaluation score of individual models
 p1 <- list.files(
@@ -316,7 +340,7 @@ ggpubr::ggarrange(
 ```
 
 
-Our individual models generally performed well and exhibited an average value of greater than 0.6 for both the metrics (AUC~ROC~ and TSS) on both calibration and validation dataset (@fig-eval-score). Across all models for all species the model performance was higher for calibration dataset (AUC~ROC~ = 0.97 &pm; 0.02 and TSS = 0.88 &pm; 0.05) as compared to the validation dataset (AUC~ROC~ = 0.94 &pm; 0.04 and TSS = 0.75 &pm; 0.16). Similarly, our ensemble models also performed well with a score of greater than 0.75 for both metrics and both algorithms across all species (@fig-eval-score).  Although both ensemble algorithms indicated equal performance, the committee averaging EMca algorithm (AUC~ROC~ = 0.96 &pm; 0.02 and TSS = 0.89 &pm; 0.05) appeared to provide a slightly better evaluation than the weighted mean averaging EMwmean algorithm (AUC~ROC~ = 0.95 &pm; 0.02 and TSS = 0.88 &pm; 0.05).
+Our individual models performed well and exhibited an average value of greater than 0.6 for both the metrics (AUC~ROC~ and TSS) on both calibration and validation datasets (@fig-eval-score). Across all models for all species, the model performance was higher for the calibration dataset (AUC~ROC~ = 0.97 &pm; 0.02 and TSS = 0.88 &pm; 0.05) as compared to the validation dataset (AUC~ROC~ = 0.94 &pm; 0.04 and TSS = 0.75 &pm; 0.16). Similarly, our ensemble models also performed well, scoring over 0.75 for considered metrics and algorithms across all species (@fig-eval-score).  Although both ensemble algorithms indicated equal performance, the committee averaging EMca algorithm (AUC~ROC~ = 0.96 &pm; 0.02 and TSS = 0.89 &pm; 0.05) appeared to provide a slightly better evaluation than the weighted mean averaging EMwmean algorithm (AUC~ROC~ = 0.95 &pm; 0.02 and TSS = 0.88 &pm; 0.05).
 
 ```{r}
 # list.files(
@@ -339,11 +363,13 @@ Our individual models generally performed well and exhibited an average value of
 
 ## Suitability change
 
-Using our EMca ensemble model, we projected the model predictions over the spatial extent of our study area and across four climatic scenario: 2010 (current), 2040, 2070 and 2100. The visual inspection of habitat suitability maps suggested substantial variation due species and climatic scenarios (@fig-hab-suit). The most prominent change in habitat suitability was observed for *Quercus semecarpifolia*, which is expected to lose largest suitable area by this century. The predictions of our ensemble model suggested that most species are expected to both lose and gain suitability under future climatic conditions. However, the loss in habitat suitability is much higher than the gain suitability resulting in a net loss of habitat for most of selected species (@fig-perc-change). In our study area, an average of 32-40% pixels are expected lose suitability across all species, whereas an average of only 3.6-8.2% pixels are expected to gain suitability leading to an average net change of 28.8-32% pixels. Among the selected species, *Quercus semecarpifolia* (71-90%) is expected to lose maximum suitable area followed by *Taxus wallichiana* (50-77%) and *Rhododendron arboreum* (37-55%) by the end of this century. On the other hand, *Shorea robusta* (3-37%) is predicted to gain maximum suitable area, followed by *Quercus leucotrichophora* (14-18%) and *Mallotus philippensis* (5-17%) by the end of this century. Nine out of ten selected species are predicted to suffer a net loss of suitable habitat under future climatic conditions. Only *Shorea robusta* is expected to gain a net suitable habitat of up to 32% pixels by the end of century (@tbl-net-change).
+Using our EMca ensemble model, we projected the model predictions over the spatial extent of our study area and across four climatic scenarios: 2010 (current), 2040, 2070, and 2100. The visual inspection of habitat suitability maps suggested substantial variation due to species and climatic scenarios (Appendix S1: Figure S5). The most prominent change in habitat suitability was observed for *Quercus semecarpifolia*, which is expected to lose the largest suitable area by this century. The predictions of our ensemble model suggested that most species are expected to both lose and gain suitability under future climatic conditions. However, the loss in habitat suitability is much higher than the gain in suitability, resulting in a net habitat loss for most selected species (@fig-perc-change). 
+
+In our study area, an average of 32--40% pixels are expected to lose suitability across all species, whereas an average of only 3.6--8.2% pixels are expected to gain suitability, leading to an average net change of 28.8--32% pixels. Among the selected species, *Quercus semecarpifolia* (71--90%) is expected to lose the maximum suitable area followed by *Taxus wallichiana* (50--77%) and *Rhododendron arboreum* (37--55%) by the end of this century. On the other hand, *Shorea robusta* (3--37%) is predicted to gain maximum suitable area, followed by *Quercus leucotrichophora* (14--18%) and *Mallotus philippensis* (5--17%) by the end of this century. Nine of ten selected species are predicted to suffer a net loss of suitable habitat under future climatic conditions. Only *Shorea robusta* is expected to gain a net suitable habitat of up to 32% pixels by the end of the century (Appendix S1: Table S2).
 
 ```{r fig.width=7, fig.height=5}
 #| label: fig-perc-change
-#| fig-cap: Summary of predicted changes in species geographic range for each selected species in Western Himalayas. The values represent the percentage of pixels that are expected to gain or lose species under future climatic conditions (2040, 2070, 2100) as compared to their near current distribution in study area.
+#| fig-cap: Summary of predicted changes in species geographic range for each selected species in the Western Himalayas. The values represent the percentage of pixels expected to gain or lose species under future climatic conditions (2040, 2070, and 2100) compared to their near-current distribution in the study area.
 
 list.files(
   path = "output/range_dynamics",
@@ -378,14 +404,14 @@ list.files(
 # ggsave("figs/04-percent_change.png", width = 7, height = 5, dpi = 600)
 ```
 
-The change in habitat suitability showed substantial spatial variation across tree species in Western Himalayas (@fig-range-change). *Mallotus philippensis* indicated loss in habitat suitability along the south west edge of its distribution (foothills of Himalayas), whereas substantial gain is expected in Uttarakhand by the end of this century. Our ensemble model predicted a small patch of habitat for *Shorea robusta* in western Himachal Pradesh, which is expected to lost by this century. This species is expected to gain suitable habitat in central and southern areas of Uttarakhand Himalayas. *Quercus leucotrichophora* is expected to gain suitable habitat in Uttarakhand Himalayas. Despite some losses at range margins, the suitable habitat for *Pinus roxburghii* is expected to remain stable under future climates (@fig-range-change).
+The change in habitat suitability showed substantial spatial variation across tree species in the Western Himalayas (@fig-range-change). *Mallotus philippensis* indicated a loss in habitat suitability along the southwest edge of its distribution (foothills of the Himalayas), whereas substantial gain is expected in Uttarakhand by the end of this century. Our ensemble model predicted a small habitat patch for *Shorea robusta* in western Himachal Pradesh, which is expected to be lost by this century. This species is expected to gain suitable habitat in central and southern areas of Uttarakhand Himalayas. *Quercus leucotrichophora* is expected to gain suitable habitat in the Uttarakhand Himalayas. Despite some losses at range margins, the suitable habitat for *Pinus roxburghii* is expected to remain stable under future climates (@fig-range-change).
 
 ```{r}
 ## map species range change
 # source("R/08-map_range_change.R")
 ```
 
-![Map showing the spatial patterns of predicted changes in habitat suitability between near current and future climatic conditions (2040, 2070 and 2100) for selected tree species in Western Himalayas.](figs/05-range_change){#fig-range-change}
+![Map showing the spatial patterns of predicted changes in habitat suitability between near current and future climatic conditions (2040, 2070, and 2100) for selected tree species in the Western Himalayas.](figs/05-range_change){#fig-range-change}
 
 ## Species richness
 
@@ -403,7 +429,7 @@ The change in habitat suitability showed substantial spatial variation across tr
 #   pivot_wider(names_from = scen, values_from = n_perc)
 ```
 
-The stacking of individual EMca ensemble models suggested that the species richness (assemblage level habitat suitability) may undergo substantial changes under future climatic conditions (@fig-richness). More than half of the total pixels may experience changes in suitable habitat for at least one studied species under future climatic scenarios. Some pixels may lose suitable habitat for as many as four tree species whereas others can gain suitable habitat for as many as seven tree species. About 48--53% pixels can gain suitable habitat, whereas about 3--6% pixels can lose suitable habitat for at least one species as compared to current climatic conditions. Thus, an increase in species richness can be more apparent than the decrease under future climates (@fig-richness a). 
+The stacking of individual EMca ensemble models suggested that the species richness (assemblage level habitat suitability) may undergo substantial changes under future climatic conditions (@fig-richness). More than half of the total pixels may experience changes in suitable habitat for at least one studied species under future climatic scenarios. Some pixels may lose suitable habitat for as many as four tree species, whereas others can gain suitable habitat for as many as seven. About 48--53% of pixels can gain suitable habitat, whereas about 3--6% can lose suitable habitat for at least one species compared to current climatic conditions. Thus, increasing species richness can be more apparent than decreasing under future climates (@fig-richness a). 
 
 ```{r fig.width=7, fig.height=8}
 #| label: fig-richness
@@ -487,7 +513,7 @@ cowplot::plot_grid(
 # ggsave("figs/06-richness_change.png", width = 7, height = 8, dpi = 600)
 ```
 
-Further, the predicted assemblage level habitat suitability (species richness) suggested elevation dependent changes in species richness under future climatic conditions (@fig-richness b). Generally, there will be little changes in species richness at lower elevations, whereas the both positive and negative changes are expected at higher elevations. The magnitude of changes in species richness is expected to become more prominent towards higher elevations. With increasing elevation, the number of pixels indicating no change in species richness tended to decrease (@fig-elev-change). Generally, the pixels representing elevations lower than 1500 m indicated a stable species richness. However, the number of pixels indicating a positive or negative change showed a unimodal relationship with elevation. The maximum pixels losing species richness were between 1400 to 1600 m and gaining species richness were between 1600 to 1800 m elevations. Further, the spatial patterns of changes in species richness also suggested that high elevation regions are expected to gain species richness under future climatic conditions. In general, the Uttarakhand Himalayas is predicted to experience more substantial changes as compared to Himachal Himalayas (@fig-richness c).
+Further, the predicted assemblage level habitat suitability (species richness) suggested elevation-dependent changes in species richness under future climatic conditions (@fig-richness b). Generally, there will be little changes in species richness at lower elevations, whereas both positive and negative changes are expected at higher elevations. The magnitude of changes in species richness is expected to become more prominent towards higher elevations. With increasing elevation, the number of pixels indicating no change in species richness tended to decrease (Appendix S1: Figure S6). Generally, the pixels representing elevations lower than 1500 m indicated a stable species richness. However, the number of pixels indicating a positive or negative change showed an unimodal relationship with elevation. The maximum pixels losing species richness were between 1400 to 1600 m, and gaining species richness were between 1600 to 1800 m elevations. Further, the spatial patterns of changes in species richness also suggested that high-elevation regions are expected to gain species richness under future climatic conditions. The Uttarakhand Himalayas are predicted to experience more substantial changes than the Himachal Himalayas (@fig-richness c).
 
 ```{r}
 # read.csv("output/richness_elevation.csv") |>
@@ -509,14 +535,16 @@ Further, the predicted assemblage level habitat suitability (species richness) s
 
 ## Elevational shifting
 
-The visual inspection of density plots indicated substantial changes in species elevation ranges under future climates. However, the changes in species elevational distribution appeared to vary due to species identity. The elevational range of most species depicted a more or less unimodal pattern except *Shorea robusta* whose elevational range is highly skewed towards lower elevations  (@fig-elev-density). Among the selected species, most visible changes were observed for average elevational range of *Lyonia ovalifolia*. The average elevation of predicted suitable pixels significantly varied due to climatic scenarios as indicated by type-II ANOVA (@tbl-elev-anova). Further, the pairwise comparisons among the climatic scenarios suggested that the average elevation for all selected species is predicted to undergo significant changes under future climatic conditions. Thus, the statistical evidence from type-II ANOVA also supported our visual observations of elevation density plots. The average elevation of *Lyonia ovalifolia* is predicted to shift from 2278 m under current climates to 2475 m by the end of this century (@tbl-elev-comp). 
+The visual inspection of density plots indicated substantial changes in species elevation ranges under future climates. However, the changes in species elevational distribution appeared to vary due to species identity. The elevational range of most species depicted a more or less unimodal pattern except *Shorea robusta* whose elevational range is highly skewed towards lower elevations  (@fig-elev-density). Among the selected species, the most visible changes were observed for the average elevational range of *Lyonia ovalifolia*. 
+
+The average elevation of predicted suitable pixels significantly varied due to climatic scenarios as indicated by type-II ANOVA (Appendix S1: Table S3). Further, the pairwise comparisons among the climatic scenarios suggested that the average elevation for all selected species is predicted to undergo significant changes under future climatic conditions. Thus, the statistical evidence from type-II ANOVA also supported our visual observations of elevation density plots. The average elevation of *Lyonia ovalifolia* is predicted to shift from 2278 m under current climates to 2475 m by the end of this century (Appendix S1: Table S4). 
 
 ```{r}
 ## plot elevation density
 # source("R/09-plot_elev_density.R")
 ```
 
-![Distribution of elevational range of selected species under current and future climatic conditions (2040, 2070, 2100). The pixel density was estimated using the Silverman's rule-of-thumb bandwidth for Gaussian kernel density estimator [@Silverman1986].](figs/07-elev_density){#fig-elev-density}
+![Distribution of the elevational range of selected species under current and future climatic conditions (2040, 2070, and 2100). The pixel density was estimated using Silverman's rule-of-thumb bandwidth for the Gaussian kernel density estimator [@Silverman1986].](figs/07-elev_density){#fig-elev-density}
 
 
 ```{r}
@@ -596,11 +624,11 @@ tuk_leading <- elev_range_param |>
   select(species, scen, emmean, cld.leading)
 ```
 
-The estimated range parameters (trailing edge, optimum range, and leading edge) for each species showed significant differences due to scenarios under current and future climatic conditions (@tbl-range-param-anova). Among all the range parameters for all species, only the optimum range for *Pinus roxburghii* showed non-significant (*F* = 0.317, *p* = 0.813) differences due to climatic scenarios (@fig-range-params). Across all species, the trailing edge and optimum range generally predicted to display a positive increase whereas the leading edge may show an overall neutral or negative change in elevation. The maximum shift in trailing edge was predicted for *Quercus lanata* followed by *Pinus roxburghii* and *Quercus semecarpifolia* (@tbl-range-param-comp). Similarly, the optimum range is predicted to shift upwards for all species except *Shorea robusta*. The highest shift in optimum range was predicted for *Lyonia ovalifolia* followed by *Cedrus deodara* and *Quercus leucotrichophora*. The most variable changes are predicted for leading edge across all species. The maximum positive shift in leading edge was predicted for *Quercus leucotrichophora*, followed by *Lyonia ovalifolia* and *Mallotus philippensis*. Whereas, the maximum downward shift was predicted for *Quercus lanata* followed by *Quercus semecarpifolia* and *Pinus roxburghii*  (@tbl-range-param-comp).
+The estimated range parameters (trailing edge, optimum range, and leading edge) for each species showed significant differences due to scenarios under current and future climatic conditions (Appendix S1: Table S5). Among all the range parameters for all species, only the optimum range for *Pinus roxburghii* showed non-significant (*F* = 0.317, *p* = 0.813) differences due to climatic scenarios (@fig-range-params). Across all species, the trailing edge and optimum range are generally predicted to display a positive increase, whereas the leading edge may show an overall neutral or negative change in elevation. The maximum shift in trailing edge was predicted for *Quercus lanata* followed by *Pinus roxburghii* and *Quercus semecarpifolia* (Appendix S1: Table S6). Similarly, the optimum range is predicted to shift upwards for all species except *Shorea robusta*. The highest shift in optimum range was predicted for *Lyonia ovalifolia* followed by *Cedrus deodara* and *Quercus leucotrichophora*. The most variable changes are predicted for leading edge across all species. The maximum positive shift in the leading edge was predicted for *Quercus leucotrichophora*, followed by *Lyonia ovalifolia* and *Mallotus philippensis*. Meanwhile, the maximum downward shift was predicted for *Quercus lanata* followed by *Quercus semecarpifolia* and *Pinus roxburghii*  (Appendix S1: Table S6).
 
 ```{r fig.width=7, fig.height=5}
 #| label: fig-range-params
-#| fig-cap: Comparison of range parameters for each species under current and future climatic conditions. The values represent the estimated marginal mean elevations using a general linear model. The points denote the mean of optimum range and the linerange represent the mean value for trailing edge and leading edge of the elevational range. The significance of difference was determined using the t-test with Tukey's adjustment for multiple comparison (equivalent to Tukey's test) and the shared letters for each species indicate non-significant (p > 0.05) differences under current and future climatic conditions. The small letters above and below the line range indicate differences in species' trailing and leading edge, respectively. The capital letters at bottom indicate the differences in optimum range.
+#| fig-cap: Comparison of range parameters for each species under current and future climatic conditions. The values represent the estimated marginal mean elevations using a general linear model. The points denote the mean of the optimum range, and the line range represents the mean value for the trailing and leading edges of the elevational range. The significance of the difference was determined using the t-test with Tukey's adjustment for multiple comparisons (equivalent to Tukey's test) and the shared letters for each species indicate non-significant (p > 0.05) differences under current and future climatic conditions. The small letters above and below the line range indicate differences in species' trailing and leading edges, respectively. The capital letters at the bottom indicate the differences in the optimum range.
 
 tuk_optimum |>
   left_join(rename(tuk_trailing, "Trailing" = emmean), 
@@ -635,7 +663,7 @@ tuk_optimum |>
 # ggsave("figs/08-range_params.png", width = 7, height = 5, dpi = 600)
 ```
 
-In general, the slope values exhibited a positive estimate for trailing edge and optimum range, whereas it showed a negative estimate for leading edge across all species (@fig-shift-slope). The slope values varied from 0.021 to 2.41 for trailing edge, --0.03 to 4.35 for optimum range, and --2.52 to 4.75 for the leading edge across all the selected ten species. The trailing edge generally showed positive increase (mean = 1.28, SD = 0.73), whereas leading edge showed highly variable responses (mean = 0.17, SD = 2.25). The leading edge of *Quercus leucotrichophora* showed maximum value of slope estimate, whereas the optimum range for *Pinus roxburghii* displayed  minimum value of slope estimate. The optimum range for *Pinus roxburghii*, *Quercus semecarpifolia*, *Shorea robusta* and *Taxus wallichiana* showed slope values close to zero. The linear regression analysis indicated moderate statistical evidence for a positive shift in trailing edge of *Taxus wallichiana* ($\beta$ = 1.71, *SE* = 0.31, *p* = 0.032). Further, the optimum range ($\beta$ = 4.35, *SE* = 0.56, *p* = 0.016) and leading edge ($\beta$ = 2.74, *SE* = 0.52, *p* = 0.034) of the *Lyonia ovalifolia* is expected to exhibit a significant upward shift (@tbl-slope-values). 
+In general, the slope values exhibited a positive estimate for the trailing edge and optimum range, whereas it showed a negative estimate for the leading edge across all species (@fig-shift-slope). The slope values varied from 0.021 to 2.41 for the trailing edge, --0.03 to 4.35 for the optimum range, and --2.52 to 4.75 for the leading edge across all the selected ten species. The trailing edge generally showed a positive increase (mean = 1.28, SD = 0.73), whereas the leading edge showed highly variable responses (mean = 0.17, SD = 2.25). The leading edge of *Quercus leucotrichophora* showed a maximum value of slope estimate, whereas the optimum range for *Pinus roxburghii* displayed  a minimum value of slope estimate. The optimum range for *Pinus roxburghii*, *Quercus semecarpifolia*, *Shorea robusta* and *Taxus wallichiana* showed slope values close to zero. The linear regression analysis indicated a moderate statistical evidence for a positive shift in the trailing edge of *Taxus wallichiana* ($\beta$ = 1.71, *SE* = 0.31, *p* = 0.032). Further, the optimum range ($\beta$ = 4.35, *SE* = 0.56, *p* = 0.016) and leading edge ($\beta$ = 2.74, *SE* = 0.52, *p* = 0.034) of the *Lyonia ovalifolia* is expected to exhibit a significant upward shift (Appendix S1: Table S7). 
 
 ```{r}
 df_trailing <- elev_range_param |>
@@ -686,7 +714,7 @@ df_leading <- elev_range_param |>
 
 ```{r fig.width=7, fig.height=5}
 #| label: fig-shift-slope
-#| fig-cap: Elevational changes in species range parameters due to current (2010) and future (2040, 2070, 2100) climatic conditions. The values are estimated slope values with associated standard errors (SE) from linear regression of marginal means against the years representing climatic conditions. The asterisks indicate that the slope values is significantly different from zero at 0.05 significance level.
+#| fig-cap: Elevational changes in species range parameters due to current (2010) and future (2040, 2070, and 2100) climatic conditions. The values are estimated slope values with associated standard errors (SE) from linear regression of marginal means against the years representing climatic conditions. The asterisks indicate that the slope value is significantly different from zero at a 0.05 significance level.
 
 
 bind_rows(
@@ -798,11 +826,11 @@ bind_rows(
 #   arrange(desc(vi.mean))
 ```
 
-The importance of environmental variables remained coherent between individual models and ensemble models for each species (@fig-var-imp). On average, the temperature-related variables were more important than the precipitation related variables in determining habitat suitability of tree species. Across all species and all models, the temperature of the wettest quarter (bio8) appeared to be most influential followed by the temperature isothermality (bio3). Among the precipitation-related variables, precipitation seasonality (bio15) and precipitation of the driest month (bio14) were influential, whereas the precipitation amount of the warmest quarter (bio18) had little effects on habitat suitability. However, the importance of variable substantially varied due to species. For example, the precipitation seasonality (bio15) has highest influence on habitat suitability of *Shorea robusta*, followed by the temperature of the wettest quarter (bio8) for *Quercus semecarpifolia* among all the species (@fig-var-imp).
+The importance of environmental variables remained coherent between individual models and ensemble models for each species (@fig-var-imp). On average, the temperature-related variables were more important than the precipitation-related variables in determining the habitat suitability of tree species. Across all species and all models, the temperature of the wettest quarter (bio8) appeared to be most influential, followed by the temperature isothermality (bio3). Among the precipitation-related variables, precipitation seasonality (bio15) and precipitation of the driest month (bio14) were influential, whereas the precipitation amount of the warmest quarter (bio18) had little effect on habitat suitability. However, the importance of variables substantially varied due to species. For example, the precipitation seasonality (bio15) has the highest influence on the habitat suitability of *Shorea robusta*, followed by the temperature of the wettest quarter (bio8) for *Quercus semecarpifolia* among all the species (@fig-var-imp).
 
 ```{r fig.width=7, fig.height=5}
 #| label: fig-var-imp
-#| fig-cap: Importance of different environmental variables used to model habitat suitability of selected species. The horizontal bars represent the mean variable importance for ensemble models (n &equals; 2). The points and linerange indicate the mean variable importance and associated standard deviation  for individual models (n &equals; 12). Temperature-related variables are shown with red colour and precipitation-related variables are shown with blue colour. Higher scores indicate higher importance of variable in determining the habitat suitability.
+#| fig-cap: Importance of different environmental variables used to model habitat suitability of selected species. The horizontal bars represent the mean variable importance for ensemble models (n &equals; 2). The points and linerange indicate the mean variable importance and associated standard deviation  for individual models (n &equals; 12). Temperature-related variables are shown in red, and precipitation-related variables are shown in blue. Higher scores indicate the importance of variables in determining habitat suitability.
 
 ## variable importance for ensemble model
 vrimp_ens <- list.files(
@@ -853,11 +881,11 @@ list.files(
 # ggsave("figs/10-var_imp.png", width = 7, height = 5, dpi = 600)
 ```
 
-The smoothed response curves from individual models revealed that each species had variable responses to environmental variables (@fig-resp-curve-single). Temperature-related variables appear to limit the distribution of suitable habitats for most species, except *Shorea robusta*. In general, the habitat suitability tend to increase with decrease in diurnal temperature range. Further, many species indicated optimum range of environmental variables where the habitat suitability maximises. It appears that most of the species survive well in environmental conditions with lower diurnal temperature range (<10&deg;C), higher isothermality (0.35--0.45&deg;C) and higher precipitation seasonality (100--150 mm). However, the likelihood of presence for some species like *Shorea robusta* showed little variation due to selected environmental variables. In case of *Shorea robusta*, the habitat suitability increased with increasing levels of precipitation seasonality (@fig-resp-curve).
+The smoothed response curves from individual models revealed that each species had variable responses to environmental variables (Appendix S1: Figure S7). Temperature-related variables limit the distribution of suitable habitats for most species, except *Shorea robusta*. In general, the habitat suitability tends to increase with a decrease in the diurnal temperature range. Further, many species indicated an optimum range of environmental variables where the habitat suitability is maximised. It appears that most of the species survive well in environmental conditions with a lower diurnal temperature range (<10&deg;C), higher isothermality (0.35--0.45&deg;C) and higher precipitation seasonality (100--150 mm). However, the likelihood of presence for some species like *Shorea robusta* showed little variation due to selected environmental variables. In the case of *Shorea robusta*, the habitat suitability increased with increasing levels of precipitation seasonality (@fig-resp-curve).
 
 ```{r fig.width=7, fig.height=5}
 #| label: fig-resp-curve
-#| fig-cap: Plot of the response curves of six environmental variables used to model habitat suitability of selected species. The lines represent the fitted smoothline across the predictions of 14 evaluated models (12 individual + 2 ensemble models). The smooth line was fitted using  the generalised additive model (GAM) with a shrinkage version of penalised cubic spline.  Temperature-related variables are shown with solid lines in shades of red colour and precipitation-related variables are shown with dashed line in shades of blue colour. The values of environmental variables were scaled to have mean zero and unit standard deviation.
+#| fig-cap: Plot of the response curves of six environmental variables used to model habitat suitability of selected species. The lines represent the fitted smooth line across the predictions of 14 evaluated models (12 individual + 2 ensemble models). The smooth line was fitted using the generalized additive model (GAM) with a shrinkage version of the penalized cubic spline. Temperature-related variables are shown with solid lines in shades of red, and precipitation-related variables are shown with dashed lines in shades of blue. The environmental variable values were scaled to mean zero and unit standard deviation.
 
 
 ## response curves for ensemble models
@@ -927,11 +955,11 @@ list.files(
 
 # Discussion
 
-The present study aimed to investigate the climate-related shifts in elevational distribution of dominant tree species in Western Himalayas. Our results suggested substantial variation in habitat suitability for different species over space and time. Consequently, the geographic area of suitable habitats is expected to undergo positive and negative changes under future climatic conditions (Aim 1). Further, the predicted changes in range margins and optimum range revealed variable responses of species to the climate change (Aim 2). These range dynamics suggested that some species are more vulnerable to climate change and their elevational distribution is expected to undergo more severe than the others. Furthermore, the species richness (assemblage level habitat suitability) is expected to undergo positive and negative changes for more than half of the analysed pixels. The higher elevation regions will be more vulnerable and positive changes will be more prominent than negative changes in species richness (Aim 3). Finally, our study identified the probable species-specific environmental variables that regulate the distribution dynamics of dominant trees in Western Himalayas (Aim 4). Overall, our findings contribute to the understanding of elevational dynamics of species distributions due to projected changes in climatic conditions. Additionally, this study highlighted the climatic vulnerabilities of dominant tree species in Western Himalayas. We show that climatic changes may cause substantial decline in suitable habitats for dominant tree species. This decline in suitable habitat is also reflected by range contractions indicating the trajectory towards extinctions under expected future climatic conditions. This information will be useful for developing better management plans and mitigate the projected effects of climate change on mountain biodiversity.
+The present study focused on the climate-related shifts in the elevational distribution of dominant tree species in the Western Himalayas. Our results suggested substantial variation in habitat suitability for different species over space and time. Consequently, the geographic area of suitable habitats is expected to undergo positive and negative changes under future climatic conditions (Aim 1). Further, the predicted changes in range margins and optimum range revealed variable responses of species to climate change (Aim 2). These range dynamics suggest that some species are more vulnerable to climate change, and their elevational distribution is expected to undergo more severe changes than others. Furthermore, the species richness (assemblage level habitat suitability) is expected to undergo positive and negative changes for more than half of the analyzed pixels. The higher elevation regions will be more vulnerable, and positive changes will be more prominent than negative changes in species richness (Aim 3). Finally, our study identified the probable species-specific environmental variables that regulate the distribution dynamics of dominant trees in the Western Himalayas (Aim 4). Overall, our findings contribute to understanding the elevational dynamics of species distributions due to projected changes in climatic conditions. Additionally, this study highlighted the climatic vulnerabilities of dominant tree species in the Western Himalayas. We show that climatic changes may cause a substantial decline in suitable habitats for dominant tree species. This decline in suitable habitat is also reflected by range contractions indicating the trajectory towards extinctions under expected future climatic conditions. This information will be useful for developing better management plans and mitigating the projected effects of climate change on mountain biodiversity.
 
 ## Range dynamics
 
-Perhaps, this study is one of first to investigate the elevational range dynamics for dominant tree species in Western Himalayas. While many studies assessed the changes in predicted habitat suitability for Himalayan trees [@Bobrowski2021], very few of them investigated the elevational range dynamics under future climatic conditions [@Maharjan2023]. In this study, we went beyond assessing the changes in suitable habitat area and investigated the elevational dynamics of range limits and optimum range for dominant trees in Western Himalayas. 
+Perhaps this study is one of the first to investigate the elevational range dynamics for dominant tree species in the Western Himalayas. While many studies assessed the changes in predicted habitat suitability for Himalayan trees [@Bobrowski2021], very few investigated the elevational range dynamics under future climatic conditions [@Maharjan2023]. In this study, we went beyond assessing the changes in suitable habitat areas and investigated the elevational dynamics of range limits and optimum range for dominant trees in the Western Himalayas. 
 
 ```{r}
 # tribble(
@@ -945,9 +973,9 @@ Perhaps, this study is one of first to investigate the elevational range dynamic
 #   arrange(Range)
 ```
 
-Our most important finding is the prediction of moderate to severe range contractions for half of the investigated tree species in Western Himalayas. Such climate-associated contractions of elevational ranges of plants have been previously documented [@Zu2021]. We showed that *Cedrus deodara*, *Pinus roxburghii*, *Quercus lanata*, *Quercus semecarpifolia*, and *Rhododendron arboreum* may contract their elevational ranges under future climatic conditions (@fig-shift-slope). The elevational range of these species indicated an upward shift in trailing edge and a downward shift in leading edge, resulting in a net contraction of their elevational ranges. These species may lose an average of 230--450 m of their current elevational range by 2100 at an average rate of 11--24 m per decade (@tbl-range-param-comp and @tbl-slope-values). Although we are not aware of any study that directly investigated the range dynamics in Western Himalayas, our findings are supported by earlier studies indicating a decrease in suitable habitat for *Cedrus deodara* [@Chitale2019], *Pinus roxburghii* [@Chitale2019], *Quercus semecarpifolia* [@Chakraborty2016; @Rathore2019a; @Saran2010], and *Rhododendron arboreum* [@Chitale2019]. Apart from suitability modelling studies, the range contraction for some of these trees is also supported by previous studies reporting limited regeneration indicated by declining densities of seedlings and saplings in Western Himalayas [@Negi2021; @Singh1997; @Thakur2021]. Further, dendrochronological studies also supported our observation of declining distribution for *Cedrus deodara* under warming climate [@Bhattacharyya2023]. 
+Our most important finding is the prediction of moderate to severe range contractions for half of the investigated tree species in the Western Himalayas. Such climate-associated contractions of elevational ranges of plants have been previously documented [@Zu2021]. We showed that *Cedrus deodara*, *Pinus roxburghii*, *Quercus lanata*, *Quercus semecarpifolia*, and *Rhododendron arboreum* may contract their elevational ranges under future climatic conditions (@fig-shift-slope). The elevational range of these species indicated an upward shift in the trailing edge and a downward shift in the leading edge, resulting in a net contraction of their elevational ranges. These species may lose an average of 230--450 m of their current elevational range by 2100 at an average rate of 11--24 m per decade (Appendix S1: Table S6 and Table S7). Although we are not aware of any study that directly investigated the range dynamics in the Western Himalayas, our findings are supported by earlier studies indicating a decrease in suitable habitat for *Cedrus deodara* [@Chitale2019], *Pinus roxburghii* [@Chitale2019], *Quercus semecarpifolia* [@Chakraborty2016; @Rathore2019a; @Saran2010], and *Rhododendron arboreum* [@Chitale2019]. Apart from suitability modeling studies, the range contraction for some of these trees is also supported by previous studies reporting limited regeneration indicated by declining densities of seedlings and saplings in the Western Himalayas [@Negi2021; @Singh1997; @Thakur2021]. Further, dendrochronological studies also supported our observation of declining distribution for *Cedrus deodara* under a warming climate [@Bhattacharyya2023]. 
 
-However, our findings of range contractions are contrary to the predictions of previous studies for *Cedrus deodara* [@Xiao2022], *Pinus roxburghii* [@Chakraborty2016; @Dad2023], *Quercus lanata* [@Bhandari2020], *Quercus semecarpifolia* [@Chitale2019], and *Rhododendron arboreum* [@Veera2019] indicating positive or little change in habitat suitability. Our study indicated that the elevational range of *Quercus semecarpifolia* is expected to contract by more than 350 m and optimum range is expected to shift 300 m upwards by the end of this century (@tbl-range-param-comp). This finding is contrary to the observations of earlier studies suggesting a downward [@Chakraborty2016], upward shift [@Shekhar2022] or little changes [@Chitale2019; @Rathore2019a] in its elevational distribution. Similarly, we predicted that *Rhododendron arboreum* may lose about 230 metres of its elevational range by 2100 at an average rate of 11.4 metres per century (@tbl-range-param-comp and @tbl-slope-values). However, a recent study suggested that the distribution of this species can shift upwards under future climatic conditions [@Veera2019]. The variations in results of different studies on same taxa in similar region indicate the complex responses of species to the climate change. Further, the results of modelling studies are influenced by multiple factors including the predictors, modelling techniques, sample size and study area. Therefore, it is imperative to accurately report the modelling procedures and the results of species distribution models should be carefully interpreted [@Zurell2020].
+However, our findings of range contractions are contrary to the predictions of previous studies for *Cedrus deodara* [@Xiao2022], *Pinus roxburghii* [@Chakraborty2016; @Dad2023], *Quercus lanata* [@Bhandari2020], *Quercus semecarpifolia* [@Chitale2019], and *Rhododendron arboreum* [@Veera2019] indicating positive or little change in habitat suitability. Our study indicated that the elevational range of *Quercus semecarpifolia* is expected to contract by more than 350 m, and the optimum range is expected to shift 300 m upwards by the end of this century (Appendix S1: Table S6). This finding is contrary to the observations of earlier studies suggesting a downward [@Chakraborty2016], upward shift [@Shekhar2022], or little changes [@Chitale2019; @Rathore2019a] in its elevational distribution. Similarly, we predicted that *Rhododendron arboreum* may lose about 230 meters of its elevational range by 2100 at an average rate of 11.4 meters per century (Appendix S1: Table S6 and Table S7). However, a recent study suggested that the distribution of this species can shift upward under future climatic conditions [@Veera2019]. The variations in results of different studies on the same taxa in a similar region indicate species' complex responses to climate change. Further, the results of modeling studies are influenced by multiple factors, including the predictors, modeling techniques, sample size, and study area. Therefore, it is imperative to report the modeling procedures accurately, and the results of species distribution models should be carefully interpreted [@Zurell2020].
 
 ```{r}
 # tribble(
@@ -959,15 +987,17 @@ However, our findings of range contractions are contrary to the predictions of p
 #   arrange(Range)
 ```
 
-On the other hand, *Lyonia ovalifolia*, *Mallotus philippensis*, and *Quercus leucotrichophora* are expected to shift their elevational distribution towards higher elevations. This finding align with previous studies in Himalayas indicating that some species may shift their distributions towards higher elevations in response to climate change [@Maharjan2023; @Telwala2013]. We found that the elevational distribution of *Quercus leucotrichophora* can shift about 330 metres upwards under projected changes in climate. This prediction is supported by earlier studies also indicating north-eastern or upward shift in its distribution [@Chakraborty2016; @Khan2023; @Rathore2019a]. However, the magnitude of shift will be stronger for the leading edge as compared to the trailing edge or optimum range (@fig-shift-slope). Perhaps, this is one of the first studies that predicted the range dynamics and habitat suitability for *Lyonia ovalifolia* and *Mallotus philippensis* in Western Himalayas. Our study indicated that *Mallotus philippensis* can shift its distribution 150 metres upward whereas the *Lyonia ovalifolia* is expected to shift its distribution about 260 metres upward under the projected climatic conditions. Further, the magnitude of elevational shift will be higher for the optimum range than their trailing or leading edges. The optimum range can shift at an average rate of 43.5 and 13.3 m/decade for *Lyonia ovalifolia* and *Mallotus philippensis*, respectively (@fig-shift-slope). Since *Mallotus philippensis* is a low-elevation species and *Lyonia ovalifolia* is a high-elevation species, it appears that high-elevation species may experience greater influence of climate change as compared to low-elevation species. Therefore, high-elevation species can be more prone to extinction than low-elevation species due to changing climatic conditions.
+On the other hand, *Lyonia ovalifolia*, *Mallotus philippensis*, and *Quercus leucotrichophora* are expected to shift their elevational distribution towards higher elevations. This finding aligns with previous  Himalayan studies indicating that some species may shift their distributions toward higher elevations in response to climate change [@Maharjan2023; @Telwala2013]. We found that the elevational distribution of *Quercus leucotrichophora* can shift about 330 meters upwards under projected changes in climate. This prediction is supported by earlier studies also indicating a north-eastern or upward shift in its distribution [@Chakraborty2016; @Khan2023; @Rathore2019a]. However, the magnitude of shift will be stronger for the leading edge than the trailing edge or optimum range (@fig-shift-slope). 
 
-Our study showed that the elevational range of *Shorea robusta* and *Taxus wallichiana* may lean towards higher elevations. Given the optimum range for these species will remain similar, the upward shift in leading edge and trailing edge for *Shorea robusta* and *Taxus wallichiana*, respectively, will lead to the elevational range leaning towards higher elevations. We show that the leading edge of *Shorea robusta* may shift 20 m upwards by the end of this century (@tbl-range-param-comp), while the trailing edge and optimum range will remain similar. This finding aligns with earlier studies indicating that the overall distribution of *Shorea robusta* may shift towards north and north-eastern parts of India [@Chitale2012]. However, our prediction of range leaning does not agree with the prediction of a recent study indicating a decline in suitable habitat for this tree species [@Kaur2023]. On the other hand, the trailing edge of *Taxus wallichiana* is expected to shift significantly upwards at an average rate of 17 m/decade, while the leading edge and optimum range remain similar under future climatic conditions (@tbl-slope-values). This range leaning is supported by the reduction in suitable habitat in this study and previous studies [@Rathore2019b].
+Perhaps this is one of the first studies that predicted the range dynamics and habitat suitability for *Lyonia ovalifolia* and *Mallotus philippensis* in the Western Himalayas. Our study indicated that *Mallotus philippensis* can shift its distribution 150 meters upward, whereas *Lyonia ovalifolia* is expected to shift its distribution about 260 meters upward under the projected climatic conditions. Further, the magnitude of the elevational shift will be higher for the optimum range than their trailing or leading edges. The optimum range can shift at an average rate of 43.5 and 13.3 m/decade for *Lyonia ovalifolia* and *Mallotus philippensis*, respectively (@fig-shift-slope). Since *Mallotus philippensis* is a low-elevation species and *Lyonia ovalifolia* is a high-elevation species, high-elevation species may experience greater influence of climate change than low-elevation species. Therefore, high-elevation species can be more prone to extinction than low-elevation species due to changing climatic conditions.
 
-One notable finding of this study is variation in responses of elevational ranges to climate change for different species. The changes in elevational range showed high variation due to species and climatic conditions. This finding is consistent with earlier studies documenting idiosyncratic responses of elevational range dynamics to climate change [@Chen2011; @Freeman2018; @Lenoir2008; @Mamantov2021; @Rumpf2018]. Previous studies suggested that the trailing and leading edges of elevational range are shifting at similar rates in response to climate change [@Freeman2018; @Rumpf2019]. However, our findings indicated that the magnitude of change is highly variable for trailing and leading edges of elevational ranges. While the trailing edge indicated upward shift for all investigated species [@Maharjan2023; @Telwala2013], the leading edge showed downward shift in elevation for half of the investigated species. These observations contradict the expectation that cooler limits (leading edge) are more sensitive to temperature changes as compared to warmer limits (trailing edge). Rather our study support that the warmer limits (trailing edge) may be more sensitive to climatic changes, indicating that physiological tolerances are more important in determining species distributions [@Cahill2014].
+Our study showed that the elevational range of *Shorea robusta* and *Taxus wallichiana* may lean towards higher elevations. Given that the optimum range for these species will remain similar, the upward shift in the leading edge of *Shorea robusta* and trailing edge of *Taxus wallichiana* will lead to the elevational range leaning towards higher elevations. We show that the leading edge of *Shorea robusta* may shift 20 m upwards by the end of this century (Appendix S1: Table S6), while the trailing edge and optimum range will remain similar. This finding aligns with earlier studies indicating that the overall distribution of *Shorea robusta* may shift towards the north and north-eastern parts of India [@Chitale2012]. However, our prediction of range leaning does not agree with the prediction of a recent study indicating a decline in suitable habitats for this tree species [@Kaur2023]. On the other hand, the trailing edge of *Taxus wallichiana* is expected to shift significantly upwards at an average rate of 17 m/decade, while the leading edge and optimum range remain similar under future climatic conditions (Appendix S1: Table S7). This range leaning is supported by the reduction in suitable habitats in this study and previous studies [@Rathore2019b].
+
+One notable finding of this study is the variation in responses of elevational ranges to climate change for different species. The changes in the elevational range showed high variation due to species and climatic conditions. This finding is consistent with earlier studies documenting idiosyncratic responses of elevational range dynamics to climate change [@Chen2011; @Freeman2018; @Lenoir2008; @Mamantov2021; @Rumpf2018]. Previous studies suggested that the trailing and leading edges of the elevational range are shifting at similar rates in response to climate change [@Freeman2018; @Rumpf2019]. However, our findings indicated that the magnitude of change is highly variable for trailing and leading edges of elevational ranges. While the trailing edge indicated an upward shift for all investigated species [@Maharjan2023; @Telwala2013], the leading edge showed a downward shift in elevation for half of the investigated species. These observations contradict the expectation that cooler limits (leading edge) are more sensitive to temperature changes than warmer limits (trailing edge). Instead, our study supports that the warmer limits (trailing edge) may be more sensitive to climatic changes, indicating that physiological tolerances are more important in determining species distributions [@Cahill2014].
 
 ## Suitable habitat
 
-Our results showed that the suitable habitat will vary due to species and climate change scenarios. Generally, the change in suitable habitat will become more stronger with projected changes in climate conditions. Although the habitat suitability can both increase or decrease with climate change, the loss in suitable habitats will be more pronounced than the gain in Western Himalayas. Therefore, many species will experience a net decline suitable habitat over time if current rates of climate change continues. Our study predicted a net loss in suitable habitats for all the investigated tree species, except *Shorea robusta*, which indicated a net gain in suitable habitat under projected climate change. These predictions align with previous studies in Himalayas indicating moderate to severe decline in suitable habitats for *Cedrus deodara* [@Chitale2019; @Dad2023], *Pinus roxburghii* [@Chitale2019], *Quercus leucotrichophora* [@Chakraborty2016; @Dhyani2020; @Khan2023; @Rathore2019a], *Quercus semecarpifolia* [@Chakraborty2016; @Rathore2019a; @Saran2010; @Shekhar2022], *Rhododendron arboreum* [@Chitale2019], and *Taxus wallichiana* [@Dad2023; @Li2020; @Rathore2019b]. Among all ten investigated tree species, only *Shorea robusta* is predicted to gain suitable habitat by the end of this century under projected climatic scenarios. We predicted a net loss of suitable habitat by 2040 and a gain of it by 2100 for *Shorea robusta* in Western Himalayas. This finding aligns with a recent study suggesting improvement in suitable habitat from 2060 to 2080 [@Kaur2023].
+Our results showed that the suitable habitat will vary due to species and climate change scenarios. Generally, the change in suitable habitat will become stronger with projected changes in climate conditions. Although habitat suitability can increase or decrease with climate change, the loss of suitable habitats will be more pronounced than the gain in the Western Himalayas. Therefore, many species will experience a net decline in suitable habitat over time if current rates of climate change continue. Our study predicted a net loss in suitable habitats for all the investigated tree species except *Shorea robusta*, which indicated a net gain in suitable habitats under projected climate change. These predictions align with previous studies in Himalayas indicating moderate to severe decline in suitable habitats for *Cedrus deodara* [@Chitale2019; @Dad2023], *Pinus roxburghii* [@Chitale2019], *Quercus leucotrichophora* [@Chakraborty2016; @Dhyani2020; @Khan2023; @Rathore2019a], *Quercus semecarpifolia* [@Chakraborty2016; @Rathore2019a; @Saran2010; @Shekhar2022], *Rhododendron arboreum* [@Chitale2019], and *Taxus wallichiana* [@Dad2023; @Li2020; @Rathore2019b]. Among all ten investigated tree species, only *Shorea robusta* is predicted to gain suitable habitat by the end of this century under projected climatic scenarios. We predicted a net loss of suitable habitat by 2040 and a gain by 2100 for *Shorea robusta* in the Western Himalayas. This finding aligns with a recent study suggesting improvement in suitable habitat from 2060 to 2080 [@Kaur2023].
 
 ```{r}
 # tribble(
@@ -985,13 +1015,13 @@ Our results showed that the suitable habitat will vary due to species and climat
 # )
 ```
 
-However, our study indicated substantial differences in the magnitude of predicted loss as compared to these earlier studies in Himalayas. For instance, we observed a much higher magnitude of loss in suitable habitats than the previous studies for *Quercus semecarpifolia* [@Rathore2019a; @Saran2010], and *Taxus wallichiana* [@Rathore2019b]. On the other hand, our predictions are much smaller for *Quercus leucotrichophora* as compared to previous studies indicating 60-99% loss in suitable habitat [@Dhyani2020; @Rathore2019a]. Further, our findings did not agree with previous studies indicating a gain or little change in habitat suitability for *Pinus roxburghii* [@Chakraborty2016; @Dad2023], *Quercus lanata* [@Barman2023; @Bhandari2020], *Quercus leucotrichophora* [@Khan2023; @Naudiyal2021], *Quercus semecarpifolia* [@Chitale2019], *Rhododendron arboreum* [@Veera2019]. These variations in modelling results may arise due to differences in the modelling parameters, predictors and spatial scale of target region. Therefore, caution must be exercise while interpreting or comparing the predictions of habitat suitability studies.
+However, our study indicated substantial differences in the magnitude of predicted loss compared to earlier studies in the Himalayas. For instance, we observed a much higher magnitude of loss in suitable habitats than the previous studies for *Quercus semecarpifolia* [@Rathore2019a; @Saran2010] and *Taxus wallichiana* [@Rathore2019b]. On the other hand, our predictions are much smaller for *Quercus leucotrichophora* as compared to previous studies indicating 60--99% loss in suitable habitat [@Dhyani2020; @Rathore2019a]. Further, our findings did not agree with previous studies indicating a gain or little change in habitat suitability for *Pinus roxburghii* [@Chakraborty2016; @Dad2023], *Quercus lanata* [@Barman2023; @Bhandari2020], *Quercus leucotrichophora* [@Khan2023; @Naudiyal2021], *Quercus semecarpifolia* [@Chitale2019], *Rhododendron arboreum* [@Veera2019]. These variations in modeling results may arise due to differences in the modeling parameters, predictors, and spatial scale of the target region. Therefore, caution must be exercised while interpreting or comparing the predictions of habitat suitability studies.
 
 ## Species richness
 
-Since species responses to climate change are likely to be highly asynchronous and idiosyncratic, climate-driven redistribution of plants will eventually alter species richness [@Bonebrake2018; @Pecl2017]. Our investigation also suggested substantial changes in assemblage level habitat suitability (species richness) under future climatic conditions. These changes will be more prominent towards higher elevations as compared to lower elevations. This finding highlights the vulnerability of high elevation ecosystems due to climate change [@Thuiller2005]. Further, we showed that the gains in species richness will be more widespread than the corresponding loss in Western Himalayas. This findings is consistent with earlier studies suggesting a general increase in species richness under projected climate change [@Sommer2010; @Thuiller2005].
+Since species responses to climate change can be highly asynchronous and idiosyncratic, climate-driven redistribution of plants will eventually alter species richness [@Bonebrake2018; @Pecl2017]. Our investigation also suggested substantial changes in assemblage-level habitat suitability (species richness) under future climatic conditions. These changes will be more prominent in higher elevations than in lower elevations. This finding highlights the vulnerability of high-elevation ecosystems due to climate change [@Thuiller2005]. Further, we showed that the gains in species richness will be more widespread than the corresponding loss in the Western Himalayas. This finding is consistent with earlier studies suggesting a general increase in species richness under projected climate change [@Sommer2010; @Thuiller2005].
 
-Although the changes in species richness varied with elevation, species gains were prominent at higher elevations and species losses at lower elevations [@Sommer2010]. The increased species richness towards high-elevation regions may be due to low extinction and immigration of other species [@Sommer2010; @Thuiller2005]. This increase in species richness suggest that the ability of species to track climate change may decrease with elevation [@Lenoir2020; @Rumpf2018]. Consequently, the faster migration of low-elevation species and slower migration of high-elevation species might have resulted in increased species richness at higher elevations. Considering the upward migration of trees, the current extent of grasslands may be replaced by forests under future climatic conditions. Such changes in species distribution has consequences for species interactions, which may form novel ecosystems with unknown structure and functions [@Bonebrake2018; @Pecl2017].
+Although the changes in species richness varied with elevation, species gains were prominent at higher elevations and species losses at lower elevations [@Sommer2010]. The increased species richness towards high-elevation regions may be due to low extinction and immigration of other species [@Sommer2010; @Thuiller2005]. This increase in species richness suggests that the ability of species to track climate change may decrease with elevation [@Lenoir2020; @Rumpf2018]. Consequently, the faster migration of low-elevation species and slower migration of high-elevation species might have increased species richness at higher elevations. Considering the upward migration of trees, the current extent of grasslands may be replaced by forests under future climatic conditions. Such changes in species distribution have consequences for species interactions, which may form novel ecosystems with unknown structures and functions [@Bonebrake2018; @Pecl2017].
 
 ## Climatic variables
 
@@ -1018,24 +1048,29 @@ Although the changes in species richness varied with elevation, species gains we
 #         legend.position = "none")
 ```
 
-The relative importance of climatic variables varied substantially among the species, indicating differences in climatic niche of Himalayan trees. Our study suggested that the distribution of Himalayan trees may be more influenced by temperature-related variables than the precipitation-related variables (@fig-var-imp). Among the selected climatic variables, the temperature of the wettest quarter (bio8) can be an important variable, regulating the distribution dynamics of Himalayan trees. However, this variable (bio8) was highly correlated with bioclimatic variables. Further, our study used only six temperature- and precipitation-related bioclimatic variable. Therefore, it is difficult to say whether this variable is really important for tree distribution in Himalayas. Although species distribution modelling studies are growing for Himalayan taxa [@Bobrowski2021], our knowledge about the environmental determinants of species distribution remained limited. Perhaps, a major challenge is selection of environmental variables [@Bradie2017], which is complicated by the inter-correlation between predictor variables [@Dormann2013]. 
+The relative importance of climatic variables varied substantially among the species, indicating differences in the climatic niche of Himalayan trees. Our study suggested that temperature-related variables may influence the distribution of Himalayan trees more than the precipitation-related variables (@fig-var-imp). Among the selected climatic variables, the temperature of the wettest quarter (bio8) can be an important variable regulating the distribution dynamics of Himalayan trees. However, this variable (bio8) was highly correlated with bioclimatic variables. Further, our study used only six temperature- and precipitation-related bioclimatic variables. Therefore, it is difficult to say whether this variable is really important for tree distribution in the Himalayas. Although species distribution modeling studies are growing for Himalayan taxa [@Bobrowski2021], our knowledge about the environmental determinants of species distribution remains limited. Perhaps a major challenge is the selection of environmental variables [@Bradie2017], which is complicated by the inter-correlation between predictor variables [@Dormann2013]. 
 
-Contrary to traditional practice of analysing and interpreting the response curves separately, our simultaneous consideration of all environmental variables revealed suitable climatic space for Himalayan trees. We found that the habitat suitability for most of the trees increased at lower mean diurnal air temperature range (bio2 < 11) and higher isothermality (bio3 > 0.35), higher precipitation amount of the driest month (bio14 > 20) and higher precipitation seasonality (bio15 > 100). The shapes of response curves for *Mallotus philippensis* and *Shorea robusta* clearly separated them from the other subtropical to temperate Himalayan trees. Interestingly, our study suggested that the habitat suitability for *Shorea robusta* was only influenced by precipitation seasonality (bio15). Although the importance of precipitation seasonality agree with a recent study in Western Himalayas [@Kaur2023], our observation of the little or no influence of other climatic variables is contrary to findings of this study.
+Contrary to the traditional practice of analyzing and interpreting the response curves separately, our simultaneous consideration of all environmental variables revealed suitable climatic space for Himalayan trees. We found that the habitat suitability for most of the trees increased at a lower mean diurnal air temperature range (bio2 < 11) and higher isothermality (bio3 > 0.35), higher precipitation amount of the driest month (bio14 > 20) and higher precipitation seasonality (bio15 > 100). The shapes of response curves for *Mallotus philippensis* and *Shorea robusta* separated them from the other subtropical to temperate Himalayan trees. Interestingly, our study suggested that the habitat suitability for *Shorea robusta* was only influenced by precipitation seasonality (bio15). Although the importance of precipitation seasonality agrees with a recent study in the Western Himalayas [@Kaur2023], our observation of the little or no influence of other climatic variables is contrary to the findings of this study.
 
 ## Implications and Limitations
 
-Species redistributions in response to climate change can have serious consequences for biodiversity, ecosystem sustainability and human health [@Bonebrake2018; @Pecl2017]. Therefore, we need a forward-thinking approach for species management that balances current and future demands while remaining resilient to climate change. Our study predicted moderate to severe range contractions for *Cedrus deodara*, *Pinus roxburghii*, *Quercus lanata*, *Quercus semecarpifolia*, and *Rhododendron arboreum* under the projected climate change in Western Himalayas. This information can be useful for prioritising conservation efforts and develop management plans to mitigate the effects of climate change on forest ecosystems in Western Himalayan. For instance, future biodiversity management plans may consider habitat protection, restoration and assisted migration to maintain the vulnerable species. Additionally, some species like *Lyonia ovalifolia*, *Mallotus philippensis*, and *Quercus leucotrichophora*, may track changes in climate by shifting their distribution to higher elevations. However, the range shifts can be highly asynchronous due to differences in dispersal capacities of species. Such asynchronous range shifts will result in altered species composition, disruption of ecological interactions and formation of novel communities with unknown consequences [@Hobbs2009]. Further, we revealed the spatio-temporal changes in suitable habitat for dominant trees in Western Himalayas. An important observation was predicted net loss in suitable habitat for *Quercus semecarpifolia* and *Taxus wallichiana* at higher elevation regions in Himachal Pradesh and Uttarakhand states. Overall, our study will contribute in ensuring that our conservation efforts not only survive but thrive in the face of a changing climate.
+In response to climate change, species redistributions can seriously affect biodiversity, ecosystem sustainability, and human health [@Bonebrake2018; @Pecl2017]. Therefore, we need a forward-thinking approach to species management that balances current and future demands while remaining resilient to climate change. Our study predicted moderate to severe range contractions for *Cedrus deodara*, *Pinus roxburghii*, *Quercus lanata*, *Quercus semecarpifolia*, and *Rhododendron arboreum* under the projected climate change in the Western Himalayas. This information can help prioritize conservation efforts and develop management plans to mitigate the effects of climate change on forest ecosystems in the Western Himalayas. For instance, future biodiversity management plans may consider habitat protection, restoration, and assisted migration to maintain the vulnerable species. 
 
-Despite its contribution, our study shares the assumptions and limitations of species distribution modelling [@Guisan2017; @Soley-Guardia2024]. Species distribution models do not consider the dispersal limitations and biotic interactions, which are crucial for determining the actual distribution of a species. Also, the species evolutionary capabilities to adapt the changing environments are neglected in species distribution models. Therefore, the predictions should be interpreted in terms of suitable habitat rather than the actual presence or absence of the species [@Guisan2017]. Apart from these inherent limitations, the quality of input data may affect the reliability of the predictions. In this study, we combined the species occurrence data from published literature and GBIF platform, which relies on citizen science. Therefore, uncertainty in species identification and location accuracy may influence our results [@Soley-Guardia2024]. Additionally, the bioclimatic data used in this study is developed through statistical modelling [@Karger2017] and therefore, its validity in real life applications may be compromised. Further, we assumed that our selected bioclimatic variables will be the primary drivers of distribution dynamics of species responses to climate change. Therefore, our results can vary with further inclusion of ecologically meaningful predictors. 
+Additionally, some species, like *Lyonia ovalifolia*, *Mallotus philippensis*, and *Quercus leucotrichophora*, may track changes in climate by shifting their distribution to higher elevations. However, the range shifts can be highly asynchronous due to differences in the dispersal capacities of species. Such asynchronous range shifts will result in altered species composition, disruption of ecological interactions, and formation of novel communities with unknown consequences [@Hobbs2009]. Further, we revealed the spatio-temporal changes in suitable habitats for dominant trees in the Western Himalayas. An important observation was predicted net loss in suitable habitat for *Quercus semecarpifolia* and *Taxus wallichiana* at higher elevation regions in Himachal Pradesh and Uttarakhand states. Overall, our study will contribute to ensuring that our conservation efforts survive and thrive in a changing climate.
+
+Despite its contribution, our study shares the assumptions and limitations of species distribution modeling [@Guisan2017; @Soley-Guardia2024]. Species distribution models do not consider the dispersal limitations and biotic interactions, which are crucial for determining the actual distribution of a species. Also, the species' evolutionary capabilities to adapt to changing environments are neglected in species distribution models. Therefore, the predictions should be interpreted in terms of suitable habitat rather than the actual presence or absence of the species [@Guisan2017]. Apart from these inherent limitations, the quality of input data may affect the reliability of the predictions. In this study, we combined the species occurrence data from published literature and the GBIF platform, which relies on citizen science. Therefore, the uncertainty of species identification and location accuracy may influence our results [@Soley-Guardia2024]. Additionally, the bioclimatic data used in this study is developed through statistical modeling [@Karger2017] and therefore, its validity in real-life applications may be compromised. Further, we assumed that our selected bioclimatic variables would be the primary drivers of the distribution dynamics of species responses to climate change. Therefore, our results can vary with further inclusion of ecologically meaningful predictors [@Groner2022]. 
 
 
 # Conclusion
 
-In this study, we went beyond the predictions of habitat suitability under future climatic conditions. Although habitat suitability maps have their own value, understanding species range dynamics can provide valuable insights for effective biodiversity management. This approach can be valuable in understanding how changes at range margins and optimum range can influence the overall species distribution dynamics under future climatic conditions. Our study highlighted the use of ecological modelling to investigate climate-related changes in species distributions. Despite its limitations, it can provide us valuable information if carefully modelled a distribution. In contrary to general expectation of synchronous upward shift in elevational distributions, our study indicate that many species may contract or lean their elevational ranges in response to climate change. These idiosyncratic responses to climate can potentially alter the ecological communities in mountain ecosystems. Further, climate change is likely to cause a net decline in suitable habitat for most of the tree species, though the magnitude will vary with species. Our study will contribute to develop informed management plans for safeguarding species and ensuring ecosystem sustainability.
+In this study, we went beyond the habitat suitability predictions under future climatic conditions. Although habitat suitability maps are valuable, understanding species range dynamics can provide valuable insights for effective biodiversity management. This approach can be helpful in understanding how changes at range margins and optimum range can influence the overall species distribution dynamics under future climatic conditions. Our study highlighted the use of ecological modeling to investigate climate-related changes in species distributions. Despite its limitations, it can provide valuable information if a distribution is carefully modelled.
+
+Contrary to a general expectation of synchronous upward shifts in elevational distributions, our study indicates that many species may contract or lean their elevational ranges in response to climate change. These idiosyncratic climate responses can potentially alter mountain’s ecological communities. Further, climate change is likely to cause a net decline in suitable habitat for most tree species, though the magnitude will vary with species. Our study will contribute to developing informed management plans for safeguarding species and ensuring ecosystem functioning and sustainability.
+
 
 # Acknowledgements {.unnumbered}
 
-We are also thankful to the Chairperson, Department of Botany, Panjab University, Chandigarh, for providing all the necessary facilities required for the work. We want to express our heartfelt gratitude to Sabir Hussain, Alok Sharma, Kamal Rana, Pravesh Bhardwaj and Sukhveer Cheema for their invaluable assistance and support during the fieldwork phase of this research. The authors are grateful to the Principal Chief Conservator of Forests (PCCF) of the Haryana Forest Department and the Himachal Pradesh Forest Department for kindly permitting them to visit the selected protected areas. Additionally, we appreciate the Forest Department of Himachal Pradesh staff and authorities, who facilitated the logistics and permits required for the fieldwork. We also appreciate the members of eFlora of India (eFI), Global Biodiversity Information Facility (GBIF), India Biodiversity Portal (IBP), iNaturalist, and other social media groups for their invaluable contributions towards identification and documentation of biodiversity from study area.
+We are also thankful to the Chairperson, Department of Botany, Panjab University, Chandigarh, for providing all the necessary facilities required for the work. We want to express our heartfelt gratitude to Sabir Hussain, Alok Sharma, Kamal Rana, Pravesh Bhardwaj and Sukhveer Cheema for their invaluable assistance and support during the fieldwork phase of this research. The authors are grateful to the Principal Chief Conservator of Forests (PCCF) of the Haryana Forest Department and the Himachal Pradesh Forest Department for kindly permitting them to visit the selected protected areas. Additionally, we appreciate the Forest Department of Himachal Pradesh staff and authorities, who facilitated the logistics and permits required for the fieldwork. We also appreciate the members of eFlora of India (eFI), Global Biodiversity Information Facility (GBIF), India Biodiversity Portal (IBP), iNaturalist, and other social media groups for their invaluable contributions towards the identification and documentation of biodiversity from the study area.
 
 # Author Contributions {.unnumbered}
 
@@ -1053,635 +1088,14 @@ auth.cont <- function(author){
 
 # Conflict of Interest Statement {.unnumbered}
 
-The authors declare that they have no known competing financial interests or personal relationships that could have influenced the work reported in this paper.
-
-# Data availability {.unnumbered}
-
-The data and `R` codes that support the findings of this study are currently available at <https://github.com/kumar-a/shifting-distributions>. The repository will be archived to FigShare after acceptance.
+The authors declare no conflicts of interest.
 
 # Funding {.unnumbered}
 
-University Grants Commission, Government of India, New Delhi is acknowledged for financial support in the form of Junior Research Fellowships to *Abhishek Kumar* [507/ (OBC) (CSIR-UGC NET DEC. 2016)], *Meenu Patil* [492/ (CSIR-UGC NET JUNE 2017)], and *Pardeep Kumar* [443/ (CSIR-UGC NET DEC. 2017)].
+University Grants Commission, Government of India, New Delhi is acknowledged for financial support in the form of Senior Research Fellowships to *Abhishek Kumar* [507/ (OBC) (CSIR-UGC NET DEC. 2016)], *Meenu Patil* [492/ (CSIR-UGC NET JUNE 2017)], and *Pardeep Kumar* [443/ (CSIR-UGC NET DEC. 2017)].
 
 # ORCID  {.unnumbered}
 Abhishek Kumar (<https://orcid.org/0000-0003-2252-7623>); Meenu Patil (<https://orcid.org/0000-0002-7664-7877>); Pardeep Kumar (<https://orcid.org/0000-0001-6707-1485>); Anand Narain Singh (<https://orcid.org/0000-0002-0148-8680>) 
-
-\newpage
-# Supplementary tables
-
-```{r}
-#| label: tbl-occ-literature
-#| tbl-cap: Summary of literature sources used to obtain occurrence data for selected tree species in Western Himalayas. 
-
-
-read.csv("output/cleaned_occ.csv") |>
-  
-  ## unique species and reference
-  distinct(species, reference) |>
-  
-  ## omit Field data
-  filter(reference != "Field") |> 
-  
-  ## prepare species names
-  mutate(species = paste0("*", species, "*")) |>
-  
-  ## prepare references
-  mutate(refs = paste0("@", reference)) |>
-  arrange(reference) |>
-  
-  ## make wider format
-  pivot_wider(names_from = reference, values_from = refs, values_fill = "-") |>
-  arrange(species) |>
-  unite(col = "Reference", Amare2016:Tiwari2023, sep = "; ") |>
-  mutate(Reference = paste0("[", gsub("-; |; -", "", Reference), "]")) |>
-  
-  ## make table
-  rename("Species" = species) |>
-  knitr::kable()
-```
-
-\newpage
-
-```{r}
-#| label: tbl-net-change
-#| tbl-cap: Predicted net change in habitat suitability for selected species under future (2040, 2070, and 2100) climatic conditions. The values represent the percentage of pixels in study area and species are arranged according to net change by the end of the century (2100). 
-
-
-list.files(
-  path = "output/range_dynamics",
-  pattern = "src_count.csv",
-  full.names = TRUE
-) |> 
-  read_csv(id = "path") |>
-  mutate(path = gsub("output/range_dynamics/|_current_to|_src_count.csv", "", path)) |>
-  separate(path, into = c("species", "year"), sep = "_") |>
-  filter(grepl("EMca", full.name)) |>
-  mutate(Species = paste0("*", gsub("\\.", " ", species), "*") ) |>
-  select(Species, year, perc.level, perc.value) |>
-  distinct() |>
-  pivot_wider(names_from = perc.level, values_from = perc.value) |>
-  select(Species, year, SpeciesRangeChange) |>
-  pivot_wider(names_from = year, values_from = SpeciesRangeChange) |>
-  arrange(`2100`) |>
-  knitr::kable(digits = 2)
-```
-
-\newpage
-
-```{r}
-#| label: tbl-elev-anova
-#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070 and 2100) on elevational distribution for each species. The type-II ANOVA was used to determine the significance of effects and generalised eta squared (&eta;^2^) was used as effect size.
-
-
-read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
-  dplyr::group_by(species) |>
-  rstatix::anova_test(elevation ~ scen, type = 2) |>
-  as_tibble() |>
-  mutate(species = paste0("*", gsub("\\.", " ", species), "*"),
-         p = ifelse(p < 0.001, yes = "<0.001", as.character(round(p, 3))),
-         `F` = round(`F`, 2)
-         ) |>
-  select(-c(Effect, `p<.05`)) |>
-  rename("Species" = species, "&eta;^2^" = ges) |>
-  knitr::kable(align = "lrrrrr")
-```
-
-\newpage
-
-```{r}
-#| label: tbl-elev-comp
-#| tbl-cap: Comparison of average elevation under current and future climatic condictions for selected species in Western Himalayas. The values (rounded to integers) represent the estimated marginal mean elevation (in metres) and associated standard error (SE) across all predicted pixels. The significance of difference was determined using the t-test with Tukey’s adjustment for multiple comparison (equivalent to Tukey’s test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
-
-
-read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
-  dplyr::group_by(species) |>
-  tidyr::nest() |>
-  rowwise() |> 
-  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
-         emm = list(emmeans::emmeans(aov_results, "scen", type= "response")), 
-         cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
-  dplyr::select(-data, -aov_results, -emm)|> 
-  unnest(cols = c(cld)) |>
-  dplyr::mutate(cld = trimws(.group)) |> 
-  dplyr::select(species, scen, emmean, SE, cld) |>
-  mutate(across(is.double, ~round(.x, 2))) |>
-  mutate(species = paste0("*", gsub("\\.", " ", species), "*"),
-         Elevation = paste0(emmean, " ± ", SE, "^", cld, "^")
-         ) |>
-  dplyr::select(species, scen, Elevation) |>
-  pivot_wider(names_from = scen, values_from = Elevation) |>
-  select(species, current, `2040`, `2070`, `2100`) |>
-  rename("Species" = species, "Current" = current) |>
-  knitr::kable(align = "lrrrr")
-```
-
-\newpage
-
-```{r}
-#| label: tbl-range-param-anova
-#| tbl-cap: Effects of climatic scenarios (current, 2040, 2070 and 2100) on elevation range parameters. The type-II ANOVA was used to test the significance of effects and generalised eta squared (&eta;^2^) was used as effect size.
-
-
-## optimum elevation
-elev_opt <- read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
-  ## build 100 m elevational bands
-  mutate(elev_band  = cut(elevation, breaks = c(seq(0, 4900, 100), Inf),
-                          labels = c(seq(100, 5000, 100)))) |>
-  ## convert to numeric
-  mutate(elev_band = as.character(elev_band),
-         elev_band = as.numeric(elev_band)) |>
-  ## count number of pixels
-  group_by(species, scen) |>
-  count(elev_band) |>
-  ## filter elevational band with maximum pixels
-  group_by(species, scen) |>
-  filter(n == max(n)) |>
-  select(-n) |>
-  rename("Optimum.range" = elev_band)
-
-## elevation range parameters (optimum and edges) ANOVA
-
-read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
-  left_join(elev_opt, by = join_by(species, scen)) |>
-  group_by(species, scen) |>
-  mutate(range_params = case_when(
-    elevation < quantile(elevation, 0.05) ~"Trailing",
-    between(elevation, Optimum.range - 100, Optimum.range) ~"Optimum",
-    elevation > quantile(elevation, 0.95) ~"Leading",
-    TRUE ~ "Other"
-  )) |>
-  select(-Optimum.range) |>
-  filter(range_params != "Other") |>
-  group_by(species, range_params) |>
-  rstatix::anova_test(formula = elevation ~ scen, type = 2) |>
-  as_tibble() |>
-  mutate(
-    species = paste0("*", gsub("\\.", " ", species), "*"),
-    `F` = round(`F`, 2),
-    p = ifelse(p < 0.001, yes = "<0.001", as.character(round(p, 3))),
-    ges = ifelse(ges < 0.001, yes = "<0.001", as.character(round(ges, 3)))
-  ) |>
-  select(-c(Effect, `p<.05`)) |>
-  rename("Species" = species, "Parameters" = range_params, "&eta;^2^" = ges) |>
-  knitr::kable(align = "llrrrrr")
-```
-
-\newpage
-
-```{r}
-## optimum elevation
-elev_opt <- read_csv("output/suitability_elevation.csv", show_col_types = FALSE) |>
-  ## build 100 m elevational bands
-  mutate(elev_band  = cut(elevation, breaks = c(seq(0, 4900, 100), Inf),
-                          labels = c(seq(100, 5000, 100)))) |>
-  ## convert to numeric
-  mutate(elev_band = as.character(elev_band),
-         elev_band = as.numeric(elev_band)) |>
-  ## count number of pixels
-  group_by(species, scen) |>
-  count(elev_band) |>
-  ## filter elevational band with maximum pixels
-  group_by(species, scen) |>
-  filter(n == max(n)) |>
-  select(-n) |>
-  rename("Optimum.range" = elev_band)
-
-## elevation range parameters (optimum and edges)
-elev_range_param <- read_csv("output/suitability_elevation.csv", 
-                             show_col_types = FALSE) |>
-  left_join(elev_opt, by = join_by(species, scen)) |>
-  group_by(species, scen) |>
-  mutate(range_params = case_when(
-    elevation < quantile(elevation, 0.05) ~"Trailing.edge",
-    between(elevation, Optimum.range - 100, Optimum.range) ~"Optimum.range",
-    elevation > quantile(elevation, 0.95) ~"Leading.edge",
-    TRUE ~ "Other.range"
-  )) |>
-  select(-Optimum.range) |>
-  filter(range_params != "Other.range")
-
-## tukey's test for significance
-tuk_trailing <- elev_range_param |>
-  filter(range_params == "Trailing.edge") |>
-  dplyr::group_by(species) |>
-  tidyr::nest() |>
-  rowwise() |> 
-  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
-                emm = list(emmeans::emmeans(aov_results, "scen", type = "response")), 
-                cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
-  dplyr::select(-data, -aov_results, -emm)|> 
-  unnest(cols = c(cld)) |>
-  dplyr::mutate(cld = trimws(.group)) |> 
-  dplyr::select(-.group) |>
-  select(species, scen, emmean, SE, cld)
-
-## tukeys test for optimum range
-tuk_optimum <- elev_range_param |>
-  filter(range_params == "Optimum.range") |>
-  dplyr::group_by(species) |>
-  tidyr::nest() |>
-  rowwise() |> 
-  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
-                emm = list(emmeans::emmeans(aov_results, "scen", type= "response")), 
-                cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
-  dplyr::select(-data, -aov_results, -emm)|> 
-  unnest(cols = c(cld)) |>
-  dplyr::mutate(cld = trimws(.group)) |> 
-  dplyr::select(-.group) |>
-  select(species, scen, emmean, SE, cld)
-
-## tukeys test for leading edge
-tuk_leading <- elev_range_param |>
-  filter(range_params == "Leading.edge") |>
-  dplyr::group_by(species) |>
-  tidyr::nest() |>
-  rowwise() |> 
-  dplyr::mutate(aov_results = list(lm(elevation ~ scen, data = data)), 
-                emm = list(emmeans::emmeans(aov_results, "scen", type= "response")), 
-                cld = list(multcomp::cld(emm, Letters = letters, reverse = FALSE))) |> 
-  dplyr::select(-data, -aov_results, -emm)|> 
-  unnest(cols = c(cld)) |>
-  dplyr::mutate(cld = trimws(.group)) |> 
-  dplyr::select(-.group) |>
-  select(species, scen, emmean, SE, cld)
-```
-
-```{r}
-#| label: tbl-range-param-comp
-#| tbl-cap: Comparison of elevational range parameters under current and future climatic condictions for selected species in Western Himalayas. The values represent the estimated marginal mean elevation (in metres) and associated standard error (SE). The significance of difference was determined using the t-test with Tukey’s adjustment for multiple comparison (equivalent to Tukey’s test). Within each row, the values superscripted with shared letters indicate non-significant differences (p > 0.05).
-
-
-bind_rows(
-  mutate(tuk_trailing, Parameters = "Trailing"),
-  mutate(tuk_optimum,  Parameters = "Optimum"),
-  mutate(tuk_leading,  Parameters = "Leading")
-) |>
-  ungroup() |>
-  mutate(across(is.double, ~round(.x, 2))) |>
-  mutate(Species = paste0("*", gsub("\\.", " ", species), "*"),
-         Elevation = paste0(emmean, " ± ", SE, "^", cld, "^")
-         ) |>
-  dplyr::select(Species, Parameters, scen, Elevation) |>
-  pivot_wider(names_from = scen, values_from = Elevation) |>
-  arrange(Species) |>
-  rename("Current" = current) |>
-  knitr::kable(align = "llrrrr")
-```
-
-\newpage
-
-```{r}
-#| label: tbl-slope-values
-#| tbl-cap: Elevational changes in species range parameters due to current (2010) and future (2040, 2070, 2100) climatic conditions. The values are estimated slope values (Estimate) with associated standard errors (SE) from linear regression of marginal means against the years representing climatic conditions.
-
-df_trailing <- tuk_trailing |> 
-  select(species, scen, emmean) |>
-  pivot_wider(names_from = scen, values_from = emmean) |>
-  mutate(Parameters = "Trailing")
-
-df_optimum <- tuk_optimum |> 
-  select(species, scen, emmean) |>
-  pivot_wider(names_from = scen, values_from = emmean) |>
-  mutate(Parameters = "Optimum")
-
-df_leading <- tuk_leading |> 
-  select(species, scen, emmean) |>
-  pivot_wider(names_from = scen, values_from = emmean) |>
-  mutate(Parameters = "Leading")
-
-bind_rows(df_trailing, df_optimum, df_leading) |> 
-  pivot_longer(cols = c(current, `2040`, `2070`, `2100`), 
-               names_to = "scen", values_to = "Elevation") |>
-  mutate(scen = ifelse(scen == "current", "2010", scen),
-         scen = as.numeric(scen)) |>
-  
-  group_by(species, Parameters) |>
-  nest() |>
-  mutate(Model = map(data, ~lm(Elevation ~ scen, data = .x) |> broom::tidy())
-         ) |> 
-  select(-data) |>
-  unnest(Model) |>
-  filter(term == "scen") |>
-  mutate(p.value = round(p.value, 3),
-         p.value = ifelse(p.value < 0.05, 
-                          yes = paste0("**", p.value, "**"), 
-                          no = as.character(p.value))) |>
-  mutate(species = paste0("*", gsub("\\.", " ", species), "*"),
-         Parameters = factor(Parameters, c("Trailing", "Optimum", "Leading"))) |>
-  select(-term) |>
-  mutate(across(is.double & !p.value, ~round(.x, 2))) |>
-  arrange(species) |>
-  knitr::kable(col.names = c("Species", "Parameters", "Estimate", "SE", "z", "p"),
-               align = "llrrrr")
-```
-
-```{r}
-# bind_rows(
-#   mutate(tuk_trailing, Parameters = "Trailing"),
-#   mutate(tuk_optimum,  Parameters = "Optimum"),
-#   mutate(tuk_leading,  Parameters = "Leading")
-# ) |>
-#   ungroup() |>
-#   mutate(across(is.double, ~round(.x, 2))) |>
-#   select(-c(SE, cld)) |>
-#   pivot_wider(names_from = scen, values_from = emmean) |>
-#   mutate(Shift = `2100` - current) |>
-#   ggplot(aes(x = Parameters, y = species, fill = Shift)) +
-#   geom_tile(color = "white") +
-#   geom_text(aes(label = round(Shift, 2))) +
-#   scale_fill_steps2(n.break = 7)
-```
-
-\newpage
-# Supplementary figures
-
-```{r}
-# DiagrammeR::grViz("clean_occ.gv") |>
-#   DiagrammeRsvg::export_svg() |> 
-#   charToRaw() |> 
-#   rsvg::rsvg_pdf("figs/s01-occ_cleaning.pdf")
-#   # rsvg::rsvg_png("figs/s01-occ_cleaning.png")
-```
-
-![Flow diagram showing the pre-processing and cleaning of geographical occurrences for selected species](figs/s01-occ_cleaning){#fig-occ-cleaning width=70%}
-
-```{r fig.width=7, fig.height=5}
-#| label: fig-species-occurrence
-#| fig-cap: Geographic distribution of cleaned occurrence dataset for selected species in the Western Himalayas.
-
-
-## Western Himalayan States
-wh <- st_read("data/site_states.gpkg", quiet = TRUE) |>
-  filter(STATE %in% c("Himachal Pradesh", "Uttarakhand"))
-
-read.csv("output/cleaned_occ.csv") |>
-  # count(species, sort = TRUE)
-  st_as_sf(coords = c("longitude", "latitude"), crs = "epsg:4326") |>
-  
-  ggplot() +
-  geom_sf(data = wh) +
-  geom_sf(color = "red", alpha = 0.25) +
-  facet_wrap(.~species, nrow = 3) +
-  theme_void() +
-  theme(strip.text = element_text(size = 9, hjust = 0, face = "italic"))
-
-## save the plots
-# ggsave("figs/s02-spec_occ.pdf", width = 7, height = 5)
-# ggsave("figs/s02-spec_occ.png", width = 7, height = 5, dpi = 600)
-```
-
-
-
-```{r fig.width=8, fig.height=6}
-#| label: fig-bio-current
-#| fig-cap: Bioclimatic variables used for modelling the potential habitat suitability (a--f). The mean diurnal air temperature range (bio2), isothermality (bio3), mean daily air temperatures of the wettest quarter (bio8), precipitation amount of the driest month (bio14), precipitation seasonality (bio15) and mean monthly precipitation amount of the warmest quarter (bio18) were downloaded from CHELSA database.
-
-## function to plot bio
-bio.plot <- function(bioname){
-  
-  ## get the bionumber
-  bionumber <- gsub("bio", "", bioname) |> as.numeric()
-  
-  ## Western Himalayan States
-  wh <- st_read("data/site_states.gpkg", quiet = TRUE) |>
-    filter(STATE %in% c("Himachal Pradesh", "Uttarakhand"))
-  
-  ## format bio data
-  bio <- rast("data/wh_bio_2010_current.tif", lyr = bionumber) |>
-    as.data.frame(xy = TRUE) |>
-    rename(bioname = 3)
-  
-  ## plot the map
-  ggplot() +
-    geom_raster(data = bio, aes(x, y, fill = bio[,3])) +
-    geom_sf(data = wh, fill = NA) +
-    theme_void() +
-    theme(legend.position = "top")
-}
-
-pb2 <- bio.plot("bio2") +
-  scale_fill_viridis_b(
-    option = "rocket", direction = 1, 
-    guide = guide_coloursteps(barwidth = 8, barheight = 0.75,
-                              label.position = "top",
-                              title = "bio2",
-                              title.vjust = 0.1)
-  )
-
-pb3 <- bio.plot("bio3") +
-  scale_fill_fermenter(
-    palette = "YlOrBr", direction = -1, n.breaks = 4,
-    guide = guide_coloursteps(barwidth = 8, barheight = 0.75,
-                              label.position = "top",
-                              title = "bio3",
-                              title.vjust = 0.1)
-  )
-
-pb8 <- bio.plot("bio8") +
-  scale_fill_fermenter(
-    palette = "PuOr", direction = -1, n.breaks = 4,
-    guide = guide_coloursteps(barwidth = 8, barheight = 0.75,
-                              label.position = "top",
-                              title = "bio8",
-                              title.vjust = 0.1)
-  )
-
-pb14 <- bio.plot("bio14") +
-  scale_fill_fermenter(
-    palette = "Blues", direction = 1,
-    guide = guide_coloursteps(barwidth = 8, barheight = 0.75, 
-                              label.position = "top",
-                              title = "bio14",
-                              title.vjust = 0.1)
-  )
-
-pb15 <- bio.plot("bio15") +
-  scale_fill_fermenter(
-    palette = "YlGnBu", direction = 1,
-    guide = guide_coloursteps(barwidth = 8, barheight = 0.75, 
-                              label.position = "top",
-                              title = "bio15",
-                              title.vjust = 0.1)
-  )
-
-pb18 <- bio.plot("bio18") +
-  scale_fill_fermenter(
-    palette = "Purples", direction = 1,
-    guide = guide_coloursteps(barwidth = 8, barheight = 0.75, 
-                              label.position = "top",
-                              title = "bio18",
-                              title.vjust = 0.1)
-  )
-
-## arrange plots
-cowplot::plot_grid(
-  pb2, pb3, pb8, pb14, pb15, pb18,
-  nrow = 2, labels = paste0(letters[1:6], ")"),
-  label_y = 0.96
-)
-
-## save the plots
-# ggsave("figs/s03-bio_current.pdf", width = 8, height = 6)
-# ggsave("figs/s03-bio_current.png", width = 8, height = 6, dpi = 600)
-```
-
-
-```{r fig.width=7, fig.height=6}
-#| label: fig-mp-bg-opt
-#| fig-cap: Effect of sampling method (disk vs random) and number of background points on the performance of MaxEnt models for *Mallotus philippensis* in Western Himalayas. The disk method sampled random points from the background defined with a minimum of 1 km and maximum of 50 km to the presence occurrence points. The initial dataset was randomly divided into 70% for training (Calibration) and 30% for testing (Validation). Each model was repeated three times for cross-validation. The performance of the model was assessed using the true skill statistic (TSS) and the area under the receiver operating characteristic curve (ROC). The values represent the mean and SD of three replications. The shaded grey region indicates the selected number of background points (n &equals; 1000).
-
-
-read.csv("output/mallotus_background.csv") |>
-  pivot_longer(cols = c(calibration, validation),
-               names_to = "dataset", values_to = "y") |>
-  select(PA, y, dataset, metric.eval, pa.meth) |>
-  mutate(dataset = str_to_title(dataset)) |>
-  group_by(PA, dataset, metric.eval, pa.meth) |>
-  rstatix::get_summary_stats("y", type = "mean_sd") |>
-
-  ggplot(aes(x = PA, y = mean, ymin = mean - sd, ymax = mean + sd,
-             fill = pa.meth, shape = pa.meth)) +
-  geom_rect(aes(xmin = 2.5, xmax = 3.5, ymin = -Inf, ymax = Inf), 
-            fill = "grey90", alpha = 0.2) +
-  geom_pointrange(position = position_dodge(0.5), size = 0.75,
-                  stroke = 0.5) +
-  facet_grid(metric.eval ~ dataset) +
-  scale_fill_manual(values = c("#e69f00", "#56b4e9"), name = "Method") +
-  scale_shape_manual(values = c(21, 24), name = "Method") +
-  scale_x_discrete(labels = c(250, 500, 1000, 2000, 5000)) +
-  labs(x = "Background points", y = "") +
-  theme_bw(base_size = 14) +
-  theme(panel.grid = element_blank(),
-        panel.spacing = unit(5, "mm"),
-        legend.title = element_blank(),
-        legend.position = c(0.005, 0.525), 
-        legend.justification = c(0, 0),
-        legend.background = element_rect(colour = "grey", linewidth = 0.25),
-        strip.background = element_rect(fill = "grey90"),
-        strip.text = element_text(face = "bold"))
-
-## save the plot
-# ggsave("figs/s04-background_points.pdf", width = 7, height = 6)
-# ggsave("figs/s04-background_points.png", width = 7, height = 6, dpi = 600)
-```
-
-```{r}
-## plot continuous habitat suitability
-# source("R/10-plot_hab_suit.R")
-```
-
-![Habitat suitability for selected species under current and future (2040, 2070 and 2100) climatic conditions over Western Himalayas. The predictions indicate the ensemble model of all individual models with a TSS of greater than 0.7 using the weighted mean averaging.](figs/s05-hab_suit){#fig-hab-suit}
-
-```{r fig.width=7, fig.height=5}
-#| label: fig-elev-change
-#| fig-cap: Elevational distribution of pixels indicating (a) gain, (b) stable, and (c) loss in assemblage level habitat suitability (species richness) under future climatic conditions.
-
-## prepare the elevation change data
-elev_change <- read.csv("output/richness_elevation.csv") |>
-  select(scen, richness, elevation) |>
-  mutate(richness = case_when(richness <  0  ~"c) Loss",
-                              richness == 0  ~"b) Stable",
-                              richness >  0  ~"a) Gain"),
-         elevation = cut(elevation, seq(0, 5000, 100), seq(100, 5000, 100)),
-         elevation = as.numeric(as.character(elevation))/1e3) |>
-  group_by(richness) |>
-  count(elevation) |>
-  mutate(perc_n = n/sum(n)*100)
-
-## plot pixels distribution for richness gains
-p_gain <- elev_change |>
-  filter(richness == "a) Gain") |>
-  ggplot(aes(x = elevation, y = perc_n)) +
-  geom_bar(stat = "identity", fill = "#5ab4ac", width = 0.075) +
-  xlim(0, 5) +
-  theme(axis.title = element_blank(),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank())
-
-## plot pixels distribution for stable richness
-p_stable <- elev_change |>
-  filter(richness == "b) Stable") |>
-  ggplot(aes(x = elevation, y = perc_n)) +
-  geom_bar(stat = "identity", fill = "grey", width = 0.075) +
-  xlim(0, 5) +
-  labs(y = "Pixels (%)") +
-  theme(axis.title.x = element_blank(),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank())
-
-## plot pixels distribution for richness loss
-p_loss <- elev_change |>
-  filter(richness == "c) Loss") |>
-  ggplot(aes(x = elevation, y = perc_n)) +
-  geom_bar(stat = "identity", fill = "#d8b365", width = 0.075) +
-  xlim(0, 5) +
-  labs(x = "Elevation (km)") +
-  theme(axis.title.y = element_blank())
-
-## arrange the plots
-cowplot::plot_grid(
-  p_gain, p_stable, p_loss, 
-  ncol = 1, align = "v",
-  labels = paste0(letters[1:3], ")"), 
-  label_x = 0.075, label_y = 0.97,
-  rel_heights = c(0.3, 0.3, 0.4)
-)
-
-## save the plot
-# ggsave("figs/s06-elev_rich_change.pdf", width = 7, height = 6)
-# ggsave("figs/s06-elev_rich_change.png", width = 7, height = 6, dpi = 600)
-```
-
-```{r}
-## plot single response curves
-# source("R/11-plot_resp_curve_single.R")
-```
-
-![Plot of the response curves of six environmental variables used to model habitat suitability of selected species. Model predictions were plotted against each environmental variable while holding values of all other variables constant at their respective means. The grey lines represent the individual response curves from the evaluated 14 models (12 individual + 2 ensemble models). The coloured thick smooth line was fitted using the generalised additive model (GAM) with a shrinkage version of penalised cubic spline. Temperature-related variables are shown with solid red lines and precipitation-related variables are shown with solid blue line. The right y-axis represent the probability of suitable habitat and x-axis represent the environmental predictors in their respective units.](figs/s07-resp_curve_single){#fig-resp-curve-single}
-
-\newpage
-# ODMAP protocol {#sec-odmap-protocol}
-
-```{r}
-#| tbl-colwidths: [25, 75]
-
-read.csv("odmap_protocol.csv") |>
-  mutate(Description = ifelse(
-    element == "", "",
-    paste0("**", element, "**: ", Value)
-  )) |>
-  rename("Element" = subsection) |>
-  select(Element, Description) |>
-  knitr::kable(booktabs = TRUE, longtable = TRUE, linesep = "")
-
-  # kableExtra::kbl(format = "markdown") |>
-  # column_spec(1, width = "1.5in") |>
-  # column_spec(2, width = "4.5in") |>
-  # row_spec(c(1, 27, 61, 75, 79), background = "#d9e2f3") |>
-  # collapse_rows(columns = 1, valign = "top")
-```
-
-\newpage
-# Session Info {#sec-session-info}
-
-```{r}
-sessioninfo::platform_info() |>
-  as.data.frame() |>
-  t() |>
-  as.data.frame() |>
-  rownames_to_column("setting") |>
-  rename("value" = V1) |>
-  knitr::kable()
-```
-
-```{r}
-sessioninfo::package_info() |>
-  as.tibble() |>
-  select(-c(ondiskversion, path, loadedpath, library)) |>
-  mutate(package = paste0("`", package, "`")) |>
-  rename("version" = loadedversion) |>
-  knitr::kable()
-```
 
 \newpage
 # References {.unnumbered}

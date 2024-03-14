@@ -64,12 +64,12 @@
 
 | Name               | Description                                             |  
 | :------------------| :-------------------------------------------------------|
-| [data](/data/)     | Primary input data used for study                       |
-| [figs](/figs/)     | Figures generated from the analysis                     |
-| [maxent](/maxent/) | Directory with `maxent.jar` and associated files        |
-| [models](/models/) | path for model files generated during analysis (empty to avoid memory usage) |
-| [output](/output/) | path for processed data generated from the analysis     |
-| [R](/R/)           | path for `R` scripts used to process and analyse data   |
+| [data](/data/)     | Directory for primary input data used for study         |
+| [figs](/figs/)     | Directory for saving figures generated from the analysis|
+| maxent             | Directory for `maxent.jar` and associated files         |
+| models             | Directory for model files (to be populated after code run) |
+| [output](/output/) | Directory for processed data generated from the analysis |
+| [R](/R/)           | Directory for `R` scripts used to process and analyse data |
 
 ## Description of primary data files
 
@@ -96,7 +96,7 @@
 | Name | Description |  
 | :--- | :--- |
 | [mod_eval](/output/mod_eval) | Directory with results of model evaluation scores, variable importance and response curves for each species |
-| [range_dynamics](/output/range_dynamics) | Directory with results of ensembling modelling (community averaging EMca), species range change (pixel counts), and model agreement scores for each species |
+| [range_dynamics](/output/range_dynamics) | Directory with results of ensembling modeling (community averaging EMca), species range change (pixel counts), and model agreement scores for each species |
 | [0003213-230918134249559.zip](/output/0003213-230918134249559.zip) | Species occurrence dataset downloaded from GBIF ([2023](https://doi.org/10.15468/dl.j7kr5r)) |
 | [cleaned_occ.csv](/output/cleaned_occ.csv) | Cleaned and processed species occurrences for selected species used for analysis |
 | [mallotus_background.csv](/output/mallotus_background.csv) | Model evaluation results for deciding background points for *Mallotus philippensis* |
@@ -127,10 +127,10 @@
 
 | Name | Description |  
 | :--- | :--- |
-| [chicago-author-date.csl](/chicago-author-date.csl) | Citation Style Language (CSL) file for Chicago Manual of Style 17th edition (author-date) citation style |
+| [ecological-applications.csl](/ecological-applications.csl) | Citation Style Language (CSL) file for [Ecological Applications](https://esajournals.onlinelibrary.wiley.com/journal/19395582) modified from Chicago Manual of Style 17th edition (author-date) citation style |
 | [credit_author.csv](/credit_author.csv) | Documentation of each authors' contribution in CRediT (Contributor Roles Taxonomy) author statement |
 | [index.qmd](/index.qmd) | Quarto markdown file with embedded `R` codes to reproduce the initial draft of manuscript |
-| [odmap_protocol.csv](/odmap_protocol.csv) | Standard ODMAP protocol (Zurell et al. [2020](https://doi.org/10.1111/ecog.04960)) to report the modelling workflow |
+| [odmap_protocol.csv](/odmap_protocol.csv) | Standard ODMAP protocol (Zurell et al. [2020](https://doi.org/10.1111/ecog.04960)) to report the modeling workflow |
 | [refs.bib](/refs.bib) | Bibliographic entries for literature cited in the manuscript |
 | [shifting-distributions.Rproj](/shifting-distributions.Rproj) | `R` project file |
 | [supp_info.qmd](/supp_info.qmd) | Quarto markdown file with embedded `R` codes to reproduce the Supporting Information |
